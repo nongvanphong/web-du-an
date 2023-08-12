@@ -2,14 +2,14 @@ import { Navigate, Outlet, Route, useRoutes } from "react-router-dom";
 import { Layout } from "../pages/auth/Layout/Layout";
 import Login from "../pages/auth/Login/Login";
 import Register from "../pages/auth/Register/Register";
-
+import path from "../utils/path/path";
 export default function useRouteElements() {
   const routes = useRoutes([
     {
       path: "",
       children: [
         {
-          path: "auth/login",
+          path: path.login,
           element: (
             <Layout>
               <Login />
@@ -17,7 +17,7 @@ export default function useRouteElements() {
           ),
         },
         {
-          path: "auth/register",
+          path: path.register,
           element: (
             <Layout>
               <Register />
@@ -27,11 +27,11 @@ export default function useRouteElements() {
         {
           // Tuyến đường mặc định cho trang chính
           path: "*",
-          element: <Navigate to="auth/login" />,
+          element: <Navigate to={path.login} />,
         },
         {
           path: "",
-          element: <Navigate to="auth/login" />,
+          element: <Navigate to={path.login} />,
         },
       ],
     },

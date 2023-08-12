@@ -6,6 +6,7 @@ module.exports = {
       colors: {
         "ct-orange": "#F9DBB1",
         "ct-white": "#ffffff",
+        "gray-ct": "#F7F5FA",
       },
       padding: {
         "ct-50": "3.125rem",
