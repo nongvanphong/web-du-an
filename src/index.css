@@ -9,6 +9,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  src: url("../src/assets/font/Nunito-Black.ttf"); /* Đường dẫn đến font file trong thư mục dự án */
 }
 
 code {

@@ -7,6 +7,8 @@ module.exports = {
         "ct-orange": "#F9DBB1",
         "ct-white": "#ffffff",
         "gray-ct": "#F7F5FA",
+        "orage-100-ct": "#FFAD3A",
+        "orage-70-ct": "#F4C17B",
       },
       padding: {
         "ct-50": "3.125rem",
@@ -17,6 +19,9 @@ module.exports = {
       width: {
         "500-ct": "31.25rem",
       },
+      // fontFamily: {
+      //   Nunito: ["Nunito-Black"],
+      // },
     },
 
     plugins: [],
