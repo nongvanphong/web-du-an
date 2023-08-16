@@ -5,7 +5,5 @@ export interface User {
   password?: string;
   permission?: number | string;
   status?: number | string;
-  refresh_token?: string;
-  accessToken?: string;
   image?: string;
 }

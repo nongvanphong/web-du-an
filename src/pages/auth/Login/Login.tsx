@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "react-query";
 
 import { validationSchema } from "../../../utils/rule/rule_Login";
 import { useState } from "react";
 import { User } from "../../../utils/types/user.types";
+import { authFetch } from "../../../fetchs/auth/authFetch";
+import path from "../../../utils/path/path";
 
 type FormStateType = Omit<User, "id">;
 
@@ -13,6 +16,8 @@ const initalFormState: FormStateType = {
 
 const Login = () => {
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
 
   const [formState, setFormState] = useState<FormStateType>(initalFormState);
   const [errors, setErrors] = useState({ phone: null, password: null });
@@ -38,18 +43,32 @@ const Login = () => {
           setIsFormValid(false);
         });
     };
-  const checkSubmit = () => {
-    if (errors.password == (null || "") && errors.phone == (null || "")) {
-      console.log("----------------", errors);
-      return;
-    }
-    console.log("--------33333--------", errors);
-    return;
-  };
+
+  const loginMutation = useMutation(authFetch.login, {
+    onSuccess: (data) => {
+      localStorage.setItem("aT", data.data.accessToken);
+      localStorage.setItem("rf", data.data.refresh_token);
+      localStorage.setItem("if", JSON.stringify(data.data.info));
+      // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
+      // Làm mới dữ liệu sau khi đăng nhập thành công
+      queryClient.invalidateQueries("data");
+      window.location.href = path.home;
+    },
+    onError: (error: any) => {
+      // Xử lý lỗi ở đây, ví dụ hiển thị thông báo lỗi đăng nhập
+      if (error.response.status === 404) {
+        return console.log("đăng kí tài khoản");
+      }
+      console.log("Login failed:-->", error.response.status);
+    },
+  });
+
   const handleSubmit = (event: any) => {
     if (isFormValid) {
       return;
     }
+
+    loginMutation.mutate(formState);
     event.preventDefault();
   };
   return (
@@ -110,8 +129,6 @@ const Login = () => {
             <button
               className="bg-orage-70-ct hover:bg-orage-100-ct text-white font-bold py-3 px-4  focus:outline-none focus:shadow-outline rounded-2xl"
               type="submit"
-              // disabled={checkSubmit()}
-              // onClick={checkSubmit}
             >
               Đăng nhập
             </button>

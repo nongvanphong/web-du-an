@@ -2,7 +2,9 @@ import { Navigate, Outlet, Route, useRoutes } from "react-router-dom";
 import { Layout } from "../pages/auth/Layout/Layout";
 import Login from "../pages/auth/Login/Login";
 import Register from "../pages/auth/Register/Register";
+
 import path from "../utils/path/path";
+import { Home } from "../pages/home/Home";
 export default function useRouteElements() {
   const routes = useRoutes([
     {
@@ -23,6 +25,10 @@ export default function useRouteElements() {
               <Register />
             </Layout>
           ),
+        },
+        {
+          path: path.home,
+          element: <Home />,
         },
         {
           // Tuyến đường mặc định cho trang chính
