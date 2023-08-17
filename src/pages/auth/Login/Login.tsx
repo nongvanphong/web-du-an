@@ -27,9 +27,7 @@ const Login = () => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   const changePageRegister = () => {
-    // navigate("/auth/register");
-
-    console.log(formState);
+    navigate(path.register);
   };
 
   const handleChange =
@@ -102,7 +100,7 @@ const Login = () => {
                 errors.phone ? `border border-red-500` : null
               }`}
               name="phone"
-              maxLength={15}
+              maxLength={10}
               onChange={handleChange("phone")}
               type="text"
               placeholder="0397777777"
