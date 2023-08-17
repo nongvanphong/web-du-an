@@ -9,6 +9,7 @@ module.exports = {
         "gray-ct": "#F7F5FA",
         "orage-100-ct": "#FFAD3A",
         "orage-70-ct": "#F4C17B",
+        "blude-30-ct": "#E8F3F2",
       },
       padding: {
         "ct-50": "3.125rem",
@@ -22,6 +23,12 @@ module.exports = {
       // fontFamily: {
       //   Nunito: ["Nunito-Black"],
       // },
+      height: {
+        "400-ct": "25rem",
+      },
+      borderColor: {
+        "orage-100-ct": "#FFAD3A",
+      },
     },
 
     plugins: [],

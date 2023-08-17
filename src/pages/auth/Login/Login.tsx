@@ -2,10 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 
 import { validationSchema } from "../../../utils/rule/rule_Login";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { User } from "../../../utils/types/user.types";
 import { authFetch } from "../../../fetchs/auth/authFetch";
 import path from "../../../utils/path/path";
+import { AppContext } from "../../../App";
 
 type FormStateType = Omit<User, "id">;
 
@@ -15,6 +16,8 @@ const initalFormState: FormStateType = {
 };
 
 const Login = () => {
+  const appContext = useContext(AppContext);
+
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -25,6 +28,7 @@ const Login = () => {
 
   const changePageRegister = () => {
     // navigate("/auth/register");
+
     console.log(formState);
   };
 
@@ -57,9 +61,20 @@ const Login = () => {
     onError: (error: any) => {
       // Xử lý lỗi ở đây, ví dụ hiển thị thông báo lỗi đăng nhập
       if (error.response.status === 404) {
-        return console.log("đăng kí tài khoản");
+        appContext.setIsHidden(
+          true,
+          "Cảnh báo",
+          "Bạn chưa có tài khoản!",
+          "Đóng"
+        );
+        return;
       }
-      console.log("Login failed:-->", error.response.status);
+      appContext.setIsHidden(
+        true,
+        "Cảnh báo",
+        "Tài khoản hoặc mật khẩu không chính xác!",
+        "Đóng"
+      );
     },
   });
 
@@ -67,9 +82,8 @@ const Login = () => {
     if (isFormValid) {
       return;
     }
-
-    loginMutation.mutate(formState);
     event.preventDefault();
+    loginMutation.mutate(formState);
   };
   return (
     <div>

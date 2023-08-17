@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+/* ẩn thanh cuộn */
+::-webkit-scrollbar {
+  display: none;
+}
