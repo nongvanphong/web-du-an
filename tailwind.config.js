@@ -10,6 +10,9 @@ module.exports = {
         "orage-100-ct": "#FFAD3A",
         "orage-70-ct": "#F4C17B",
         "blude-30-ct": "#E8F3F2",
+        "green-80-ct": "#7CF900",
+        "yellow-80-ct": "#F9EF00",
+        "red-80-ct": "#FF3D00",
       },
       padding: {
         "ct-50": "3.125rem",

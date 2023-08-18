@@ -39,9 +39,8 @@ export default function Register() {
   });
 
   const [isFormValid, setIsFormValid] = useState(false);
-  const changePageRegister = () => {
-    //navigate("/auth/login");
-    // console.log("formState", formState);
+  const changePage = () => {
+    navigate(path.login);
   };
   //const handleChange =
   // (name: keyof FormStateType) =>
@@ -177,15 +176,15 @@ export default function Register() {
               className="bg-orage-70-ct hover:bg-orage-100-ct text-white font-bold py-3 px-4  focus:outline-none focus:shadow-outline rounded-2xl"
               type="submit"
             >
-              Đăng nhập
+              Đăng kí
             </button>
 
             <button
-              onClick={changePageRegister}
+              onClick={changePage}
               className="bg-orage-70-ct hover:bg-orage-100-ct text-white font-bold py-3 px-4 rounded-2xl focus:outline-none focus:shadow-outline"
               type="button"
             >
-              Đăng kí
+              Đăng nhập
             </button>
           </div>
         </form>

@@ -12,10 +12,15 @@ import Register from "../pages/auth/Register/Register";
 import path from "../utils/path/path";
 import { Home } from "../pages/home/Home";
 import { Store } from "../pages/store/store/store";
-import { MainLayout } from "../layout/mainLayout";
+
 import Manager from "../pages/store/manager/manager";
 import Drink from "../pages/store/drink/drink";
 import Food from "../pages/store/food/food";
+import ResgisterStore from "../pages/store/resgisterSrore/resgisterStore";
+
+import { MainLayout } from "../layout/mainLayout";
+import { AppMainLayout } from "../layout/appMainLayout";
+
 export default function useRouteElements() {
   const navigate = useNavigate();
   const routes = useRoutes([
@@ -72,6 +77,14 @@ export default function useRouteElements() {
             <MainLayout>
               <Food />
             </MainLayout>
+          ),
+        },
+        {
+          path: path.registerSrore,
+          element: (
+            <AppMainLayout>
+              <ResgisterStore />
+            </AppMainLayout>
           ),
         },
         {

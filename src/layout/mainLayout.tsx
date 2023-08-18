@@ -2,9 +2,9 @@ import iconFitter from "../../src/assets/icon/svg/fitter.svg";
 import iconChip from "../../src/assets/icon/svg/chip.svg";
 
 import avt from "../../src/assets/image/avt.svg";
-import path from "../utils/path/path";
-import { useNavigate } from "react-router-dom";
+
 import Navigation from "../component/navigation/navigation";
+import Time from "../component/time/time";
 
 interface Props {
   children?: React.ReactNode;
@@ -17,7 +17,9 @@ export const MainLayout = ({ children }: Props) => {
 
         <div className="w-full h-full bg-gray-ct pt-3">
           <div className="w-full h-14 flex justify-between py-1 px-5">
-            <div>To day, 08-08-2022</div>
+            <div>
+              <Time />
+            </div>
             <div className="input input-bordered input-warning w-full max-w-md rounded-2xl px-5  flex items-center bg-white">
               <input
                 type="text"

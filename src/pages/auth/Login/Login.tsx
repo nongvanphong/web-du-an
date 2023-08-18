@@ -3,17 +3,10 @@ import { useMutation, useQueryClient } from "react-query";
 
 import { validationSchema } from "../../../utils/rule/rule_Login";
 import { useContext, useState } from "react";
-import { User } from "../../../utils/types/user.types";
 import { authFetch } from "../../../fetchs/auth/authFetch";
 import path from "../../../utils/path/path";
 import { AppContext } from "../../../App";
-
-type FormStateType = Omit<User, "id">;
-
-const initalFormState: FormStateType = {
-  phone: "",
-  password: "",
-};
+import { useFormik } from "formik";
 
 const Login = () => {
   const appContext = useContext(AppContext);
@@ -21,30 +14,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
-
-  const [formState, setFormState] = useState<FormStateType>(initalFormState);
-  const [errors, setErrors] = useState({ phone: null, password: null });
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  const changePageRegister = () => {
-    navigate(path.register);
-  };
-
-  const handleChange =
-    (name: keyof FormStateType) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setFormState((prev) => ({ ...prev, [name]: event.target.value }));
-      validationSchema
-        .validateAt(name, { [name]: event.target.value })
-        .then(() => {
-          setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-          setIsFormValid(validationSchema.isValidSync(formState));
-        })
-        .catch((err) => {
-          setErrors((prevErrors) => ({ ...prevErrors, [name]: err.message }));
-          setIsFormValid(false);
-        });
-    };
 
   const loginMutation = useMutation(authFetch.login, {
     onSuccess: (data) => {
@@ -76,18 +45,29 @@ const Login = () => {
     },
   });
 
-  const handleSubmit = (event: any) => {
-    if (isFormValid) {
-      return;
-    }
-    event.preventDefault();
-    loginMutation.mutate(formState);
+  const formik = useFormik({
+    initialValues: {
+      phone: "",
+      password: "",
+    },
+    validationSchema: validationSchema, // Sử dụng validationSchema ở đây
+    onSubmit: (values) => {
+      // Call your custom submit function
+      //  console.log("===>", values);
+      //event.preventDefault();
+      loginMutation.mutate(values);
+    },
+  });
+
+  const changePageRegister = () => {
+    navigate(path.register);
   };
+
   return (
     <div>
       <div className="w-500-ct flex flex-col gap-20">
         <div className="text-center text-4xl font-bold">Đăng nhập</div>
-        <form className=" " onSubmit={handleSubmit}>
+        <form className=" " onSubmit={formik.handleSubmit}>
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -97,18 +77,18 @@ const Login = () => {
             </label>
             <input
               className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                errors.phone ? `border border-red-500` : null
+                formik.errors.phone ? `border border-red-500` : null
               }`}
               name="phone"
               maxLength={10}
-              onChange={handleChange("phone")}
+              onChange={formik.handleChange}
               type="text"
               placeholder="0397777777"
-              value={formState.phone}
+              value={formik.values.phone}
             />
             <div className="w-full flex justify-end py-1">
               <span className="text-red-500 text-xs italic">
-                {errors.phone}
+                {formik.errors.phone}
               </span>
             </div>
           </div>
@@ -121,18 +101,18 @@ const Login = () => {
             </label>
             <input
               className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                errors.password ? `border border-red-500` : null
+                formik.errors.password ? `border border-red-500` : null
               }`}
               id="password"
               type="password"
               maxLength={15}
               placeholder="******************"
-              onChange={handleChange("password")}
-              value={formState.password}
+              onChange={formik.handleChange}
+              value={formik.values.password}
             />
             <div className="w-full flex justify-end py-1">
               <span className="text-red-500 text-xs italic">
-                {errors.password}
+                {formik.errors.password}
               </span>
             </div>
           </div>

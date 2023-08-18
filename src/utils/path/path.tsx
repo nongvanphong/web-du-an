@@ -7,6 +7,7 @@ const path = {
   manager: "/store/manager",
   managerDrink: "/store/manager/drink",
   managerfood: "/store/manager/food",
+  registerSrore: "/store/register",
 } as const;
 
 export default path;
