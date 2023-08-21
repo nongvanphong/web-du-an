@@ -20,6 +20,7 @@ import ResgisterStore from "../pages/store/resgisterSrore/resgisterStore";
 
 import { MainLayout } from "../layout/mainLayout";
 import { AppMainLayout } from "../layout/appMainLayout";
+import Test from "../component/test/Test";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
@@ -86,6 +87,10 @@ export default function useRouteElements() {
               <ResgisterStore />
             </AppMainLayout>
           ),
+        },
+        {
+          path: "t",
+          element: <Test />,
         },
         {
           // Tuyến đường mặc định cho trang chính

@@ -29,7 +29,7 @@ export const MainLayout = ({ children }: Props) => {
               <img src={iconFitter} alt="filter" className="w-8 h-8" />
             </div>
           </div>
-          <div className="w-full h-full px-5 pt-5 overflow-hidden">
+          <div className="w-full h-[calc(100%-3.5rem)] px-5 pt-5 overflow-hidden">
             {children}
           </div>
         </div>

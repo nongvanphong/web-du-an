@@ -31,13 +31,21 @@ export default function Navigation() {
       </div>
       <div
         className={`w-11 h-11 ${
-          location.pathname == path.manager ? `bg-orage-100-ct` : null
+          location.pathname == path.manager ||
+          location.pathname == path.managerDrink ||
+          location.pathname == path.managerfood
+            ? `bg-orage-100-ct`
+            : null
         } rounded-full flex justify-center items-center cursor-pointer`}
         onClick={() => navigate(path.manager)}
       >
         <img
           src={
-            location.pathname == path.manager ? iconSettingWhite : iconSetting
+            location.pathname == path.manager ||
+            location.pathname == path.managerDrink ||
+            location.pathname == path.managerfood
+              ? iconSettingWhite
+              : iconSetting
           }
           alt="setting"
           className="w-6 h-6"

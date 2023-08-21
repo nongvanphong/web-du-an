@@ -1,3 +1,7 @@
 export default function Food() {
-  return <div>Food</div>;
+  return (
+    <div>
+      <div>Quản lý đồ uống</div>
+    </div>
+  );
 }
