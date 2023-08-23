@@ -6,6 +6,7 @@ const path = {
   store: "/store",
   manager: "/store/manager",
   managerDrink: "/store/manager/drink",
+  managerListDrink: "/store/manager/list",
   managerfood: "/store/manager/food",
   registerSrore: "/store/register",
 } as const;

@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { ItemAdd, ItemShow } from "../../../component/item/ItemAdd";
 import { useCallback, useState } from "react";
 import ItemAddOption from "../../../component/item/itemAddOption";
+import { useLocation } from "react-router-dom";
 
 const arr = [
   {
@@ -24,8 +25,9 @@ const arr = [
 ];
 
 export default function Drink() {
-  const [itemTest, setItemTest] = useState(arr);
+  const { state } = useLocation();
 
+  const [itemTest, setItemTest] = useState(arr);
   const [file, setFile] = useState("");
 
   // pick img
@@ -350,11 +352,22 @@ export default function Drink() {
                   </div>
                 </div>
               </div>
-              <div className="w-full flex justify-center items-center">
-                <div className="px-40 py-2 bg-green-80-ct text-center text-white  text-lg rounded-md cursor-pointer">
-                  <b>Thêm</b>
+              {state ? (
+                <div className="w-full flex justify-center items-center flex-col gap-3">
+                  <div className="px-40 py-2 bg-orage-100-ct text-center text-white  text-lg rounded-md cursor-pointer">
+                    <b>Sửa</b>
+                  </div>
+                  <div className="px-40 py-2 bg-red-600 text-center text-white  text-lg rounded-md cursor-pointer">
+                    <b>Xóa</b>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="w-full flex justify-center items-center flex-col gap-3">
+                  <div className="px-40 py-2 bg-green-80-ct text-center text-white  text-lg rounded-md cursor-pointer">
+                    <b>Thêm</b>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

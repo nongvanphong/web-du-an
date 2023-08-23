@@ -19,7 +19,7 @@ export default function Manager() {
         </div>
         <div
           className="w-full h-32 bg-blude-30-ct rounded-3xl flex items-center cursor-pointer"
-          onClick={() => navigate(path.managerDrink)}
+          onClick={() => navigate(path.managerListDrink)}
         >
           <img src={drink} alt="drink" className="w-32 h-32 rounded-3xl" />
           <span className="ml-24 text-xl">

@@ -33,7 +33,8 @@ export default function Navigation() {
         className={`w-11 h-11 ${
           location.pathname == path.manager ||
           location.pathname == path.managerDrink ||
-          location.pathname == path.managerfood
+          location.pathname == path.managerfood ||
+          location.pathname == path.managerListDrink
             ? `bg-orage-100-ct`
             : null
         } rounded-full flex justify-center items-center cursor-pointer`}
@@ -43,7 +44,8 @@ export default function Navigation() {
           src={
             location.pathname == path.manager ||
             location.pathname == path.managerDrink ||
-            location.pathname == path.managerfood
+            location.pathname == path.managerfood ||
+            location.pathname == path.managerListDrink
               ? iconSettingWhite
               : iconSetting
           }

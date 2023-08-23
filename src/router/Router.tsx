@@ -21,6 +21,8 @@ import ResgisterStore from "../pages/store/resgisterSrore/resgisterStore";
 import { MainLayout } from "../layout/mainLayout";
 import { AppMainLayout } from "../layout/appMainLayout";
 import Test from "../component/test/Test";
+import listDrink from "./../pages/store/drink/listDrink";
+import ListDrink from "./../pages/store/drink/listDrink";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
@@ -73,6 +75,14 @@ export default function useRouteElements() {
           ),
         },
         {
+          path: path.managerListDrink,
+          element: (
+            <MainLayout>
+              <ListDrink />
+            </MainLayout>
+          ),
+        },
+        {
           path: path.managerfood,
           element: (
             <MainLayout>
@@ -88,6 +98,7 @@ export default function useRouteElements() {
             </AppMainLayout>
           ),
         },
+
         {
           path: "t",
           element: <Test />,
