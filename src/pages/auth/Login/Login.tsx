@@ -30,7 +30,7 @@ const Login = () => {
       if (error.response.status === 404) {
         appContext.setIsHidden(
           true,
-          "Cảnh báo",
+
           "Bạn chưa có tài khoản!",
           "Đóng"
         );
@@ -38,7 +38,6 @@ const Login = () => {
       }
       appContext.setIsHidden(
         true,
-        "Cảnh báo",
         "Tài khoản hoặc mật khẩu không chính xác!",
         "Đóng"
       );

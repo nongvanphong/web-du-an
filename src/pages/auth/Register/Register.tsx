@@ -7,6 +7,7 @@ import { validationSchema } from "../../../utils/rule/rule_Login";
 import path from "../../../utils/path/path";
 import { useFormik } from "formik";
 import { validationSchemaRegister } from "../../../utils/rule/rule_register";
+import { authFetch } from "../../../fetchs/auth/authFetch";
 
 type confirmPassword = {
   confirmPassword?: string;
@@ -20,10 +21,30 @@ const initalFormState: FormStateType = {
 };
 export default function Register() {
   const navigate = useNavigate();
-
   const appContext = useContext(AppContext);
-
   const queryClient = useQueryClient();
+
+  const loginMutation = useMutation(authFetch.Register, {
+    onSuccess: (data) => {
+      // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
+      // Làm mới dữ liệu sau khi đăng nhập thành công
+      queryClient.invalidateQueries("data");
+      navigate(path.login);
+    },
+    onError: (error: any) => {
+      // Xử lý lỗi ở đây, ví dụ hiển thị thông báo lỗi đăng nhập
+      if (error.response.status === 409) {
+        appContext.setIsHidden(true, "Số điện thoại đã được sử dụng!", "Đóng");
+        return;
+      }
+      appContext.setIsHidden(
+        true,
+
+        "Đăng kí thất bại!",
+        "Đóng"
+      );
+    },
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -33,67 +54,18 @@ export default function Register() {
     },
     validationSchema: validationSchemaRegister, // Sử dụng validationSchema ở đây
     onSubmit: (values) => {
-      // Call your custom submit function
-      console.log("===>", values);
+      const data = {
+        phone: values.phone,
+        password: values.password,
+      };
+      loginMutation.mutate(data);
     },
   });
 
-  const [isFormValid, setIsFormValid] = useState(false);
   const changePage = () => {
     navigate(path.login);
   };
-  //const handleChange =
-  // (name: keyof FormStateType) =>
-  // (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  //   setFormState((prev) => ({ ...prev, [name]: event.target.value }));
 
-  //   validationSchema
-  //     .validateAt(name, { [name]: event.target.value })
-  //     .then(() => {
-  //       setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-  //       setIsFormValid(validationSchema.isValidSync(formState));
-  //     })
-  //     .catch((err) => {
-  //       setErrors((prevErrors) => ({ ...prevErrors, [name]: err.message }));
-  //       setIsFormValid(false);
-  //     });
-  // };
-
-  // const loginMutation = useMutation(authFetch.login, {
-  //   onSuccess: (data) => {
-
-  //     // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
-  //     // Làm mới dữ liệu sau khi đăng nhập thành công
-  //     queryClient.invalidateQueries("data");
-  //     navigate(path.login);
-  //   },
-  //   onError: (error: any) => {
-  //     // Xử lý lỗi ở đây, ví dụ hiển thị thông báo lỗi đăng nhập
-  //     if (error.response.status === 404) {
-  //       appContext.setIsHidden(
-  //         true,
-  //         "Cảnh báo",
-  //         "Bạn chưa có tài khoản!",
-  //         "Đóng"
-  //       );
-  //       return;
-  //     }
-  //     appContext.setIsHidden(
-  //       true,
-  //       "Cảnh báo",
-  //       "Tài khoản hoặc mật khẩu không chính xác!",
-  //       "Đóng"
-  //     );
-  //   },
-  // });
-
-  const handleSubmit = (event: any) => {
-    if (isFormValid) {
-      return;
-    }
-    event.preventDefault();
-    // loginMutation.mutate(formState);
-  };
   return (
     <div>
       <div className="w-500-ct flex flex-col gap-20">
