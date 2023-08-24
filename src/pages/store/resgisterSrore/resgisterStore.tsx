@@ -1,10 +1,105 @@
 import { useDropzone } from "react-dropzone";
+import { useNavigate } from "react-router-dom";
 
 import { ItemAdd, ItemShow } from "../../../component/item/ItemAdd";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
+import path from "../../../utils/path/path";
+import { User } from "../../../utils/types/user.types";
+import { useFormik } from "formik";
+import { validationSchema } from "../../../utils/rule/rule_Register_Store";
+import { useMutation, useQueryClient } from "react-query";
+import { storeFetch } from "../../../fetchs/store/store";
+import { AppContext } from "../../../App";
 
 export default function ResgisterStore() {
   const [file, setFile] = useState("");
+  const [user, setUser] = useState<User>();
+  const appContext = useContext(AppContext);
+  useEffect(() => {
+    const data = localStorage.getItem("if");
+    if (data) {
+      setUser(JSON.parse(data.toString()));
+    }
+  }, []);
+
+  const navigate = useNavigate();
+
+  const fetchCoordinates = async () => {
+    let lat_store = -11111;
+    let long_store = -11111;
+
+    if (navigator.geolocation) {
+      try {
+        const position = await new Promise<GeolocationPosition>(
+          (resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                resolve(position);
+              },
+              (error) => {
+                reject(error);
+              }
+            );
+          }
+        );
+
+        lat_store = position.coords.latitude;
+        long_store = position.coords.longitude;
+      } catch (error) {
+        console.error("Error getting location:", error);
+      }
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+
+    return { lat_store, long_store };
+  };
+  const loginMutation = useMutation(storeFetch.Register, {
+    onSuccess: (data) => {
+      // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
+      // Làm mới dữ liệu sau khi đăng nhập thành công
+      appContext.setIsHidden(
+        true,
+        "Đăng kí thành công. Vui lòng đợi admin xác nhận!",
+        "Đóng"
+      );
+      //window.location.reload();
+    },
+    onError: (error: any) => {
+      // Xử lý lỗi ở đây, ví dụ hiển thị thông báo lỗi đăng nhập
+      if (error.response.status === 400) {
+        appContext.setIsHidden(true, "Đăng kí thất bại!", "Đóng");
+        return;
+      }
+    },
+  });
+  const formik = useFormik({
+    initialValues: {
+      phone_store: "",
+      name_store: "",
+      time_close: "",
+      describe: "",
+    },
+    validationSchema: validationSchema, // Sử dụng validationSchema ở đây
+    onSubmit: async (values) => {
+      const { lat_store, long_store } = await fetchCoordinates();
+
+      if (long_store == -11111 && lat_store == -11111) {
+        return console.log("lỗi không lấy được tọa độ");
+      }
+
+      const data = {
+        phone_store: values.phone_store,
+        name_store: values.name_store,
+        time_close: values.time_close,
+        describe: values.describe,
+        lat_store: lat_store,
+        long_store: long_store,
+        address_store: "test",
+      };
+      loginMutation.mutate(data);
+    },
+  });
 
   // pick img
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -31,21 +126,34 @@ export default function ResgisterStore() {
           <b className="text-xl">Đăng kí dịch vụ</b>
         </div>
         <div className="w-full  flex gap-5 justify-end">
-          <div className="px-5 py-3 bg-green-80-ct rounded-2xl text-white cursor-pointer">
+          <button
+            className="px-5 py-3 bg-green-80-ct rounded-2xl text-white cursor-pointer"
+            type="button" // Để tránh hành vi mặc định của nút submit trong form
+            onClick={() => formik.handleSubmit()}
+          >
             <b>Xác nhận</b>
-          </div>
-          <div className="px-5 py-3 bg-yellow-80-ct rounded-2xl text-white cursor-pointer">
+          </button>
+          <div
+            className="px-5 py-3 bg-yellow-80-ct rounded-2xl text-white cursor-pointer"
+            onClick={() => window.location.reload()}
+          >
             <b>Làm mới</b>
           </div>
-          <div className="px-5 py-3 bg-red-80-ct rounded-2xl text-white cursor-pointer">
+          <div
+            className="px-5 py-3 bg-red-80-ct rounded-2xl text-white cursor-pointer"
+            onClick={() => navigate(path.home)}
+          >
             <b>Hủy</b>
           </div>
         </div>
 
-        <form className="w-full h-full  overflow-scroll pt-3  flex gap-3">
+        <form
+          className="w-full h-full  overflow-scroll pt-3  flex gap-3"
+          onSubmit={formik.handleSubmit}
+        >
           <div className="w-full h-full">
-            <div className="w-full h-64  flex justify-between">
-              <div className="w-56 h-full " {...getRootProps()}>
+            <div className="w-full   flex justify-between">
+              <div className="w-56 h-64 " {...getRootProps()}>
                 <input {...getInputProps()} />
                 {isDragActive ? (
                   <ItemShow file={file} />
@@ -63,11 +171,18 @@ export default function ResgisterStore() {
                   </label>
                   <input
                     className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                    name="phone"
-                    maxLength={50}
                     type="text"
-                    placeholder="Cửa hàng gà rán"
+                    placeholder="Tên cửa hàng"
+                    name="name_store"
+                    maxLength={100}
+                    onChange={formik.handleChange}
+                    value={formik.values.name_store}
                   />
+                  <div className="w-full flex justify-end py-1">
+                    <span className="text-red-500 text-xs italic">
+                      {formik.errors.name_store}
+                    </span>
+                  </div>
                 </div>
                 <div className="mb-4">
                   <label
@@ -78,11 +193,18 @@ export default function ResgisterStore() {
                   </label>
                   <input
                     className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                    name="phone"
-                    maxLength={50}
                     type="text"
                     placeholder="0397777777"
+                    name="phone_store"
+                    maxLength={10}
+                    onChange={formik.handleChange}
+                    value={formik.values.phone_store}
                   />
+                  <div className="w-full flex justify-end py-1">
+                    <span className="text-red-500 text-xs italic">
+                      {formik.errors.phone_store}
+                    </span>
+                  </div>
                 </div>
                 <div className="w-full flex gap-5">
                   <div className="mb-4 mt-5">
@@ -111,11 +233,18 @@ export default function ResgisterStore() {
 
                     <input
                       className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                      name="phone"
-                      maxLength={20}
+                      maxLength={5}
                       type="text"
-                      placeholder="20h30"
-                    ></input>
+                      placeholder="20:30"
+                      name="time_close"
+                      onChange={formik.handleChange}
+                      value={formik.values.time_close}
+                    />
+                    <div className="w-full flex justify-end py-1">
+                      <span className="text-red-500 text-xs italic">
+                        {formik.errors.time_close}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -132,8 +261,8 @@ export default function ResgisterStore() {
                 name="phone"
                 maxLength={50}
                 type="text"
-                placeholder="Nguyễn Văn Hậu"
-                value={"Nguyễn văn hậu"}
+                placeholder={user?.user_name}
+                value={user?.user_name}
                 disabled={true}
               />
             </div>
@@ -340,7 +469,16 @@ export default function ResgisterStore() {
                     placeholder="Hãy mô tả về cửa hàng của bạn..."
                     required
                     defaultValue={""}
+                    name="describe"
+                    maxLength={2000}
+                    onChange={formik.handleChange}
+                    value={formik.values.describe}
                   />
+                  <div className="w-full flex justify-end py-1">
+                    <span className="text-red-500 text-xs italic">
+                      {formik.errors.describe}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

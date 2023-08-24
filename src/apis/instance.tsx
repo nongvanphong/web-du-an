@@ -35,7 +35,10 @@ instance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response.status === 400) {
+    if (
+      error.response.status === 400 &&
+      error.response.msg === "User does not exist!"
+    ) {
       window.location.href = path.premissions;
     }
     if (error.response && error.response.status === 401) {

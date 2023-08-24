@@ -27,6 +27,7 @@ export const Home = () => {
   });
 
   useEffect(() => {
+    console.log(data);
     setLoadingData(isLoading);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
@@ -49,8 +50,7 @@ export const Home = () => {
           <div>load....</div>
         ) : (
           <div className="grid grid-cols-3  gap-10 w-full">
-            {!data &&
-              data.data.map((i: Store) => <Item key={i.id} store={i} />)}
+            {data && data.data.map((i: Store) => <Item key={i.id} store={i} />)}
             <div className="h-64 cursor-pointer ">
               <ItemAdd handleClick={hanleClick} />
             </div>
