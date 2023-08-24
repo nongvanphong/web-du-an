@@ -23,6 +23,8 @@ import { AppMainLayout } from "../layout/appMainLayout";
 import Test from "../component/test/Test";
 import listDrink from "./../pages/store/drink/listDrink";
 import ListDrink from "./../pages/store/drink/listDrink";
+import { Premissions } from "../pages/premission/premissions";
+import Notfail from "../pages/premission/notfail";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
@@ -98,7 +100,14 @@ export default function useRouteElements() {
             </AppMainLayout>
           ),
         },
-
+        {
+          path: path.premissions,
+          element: <Premissions />,
+        },
+        {
+          path: path.notfial,
+          element: <Notfail />,
+        },
         {
           path: "t",
           element: <Test />,

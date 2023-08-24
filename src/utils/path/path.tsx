@@ -9,6 +9,8 @@ const path = {
   managerListDrink: "/store/manager/list",
   managerfood: "/store/manager/food",
   registerSrore: "/store/register",
+  premissions: "/error/403",
+  notfial: "/error/404",
 } as const;
 
 export default path;

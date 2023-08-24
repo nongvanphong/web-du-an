@@ -3,6 +3,7 @@ import axios from "axios";
 import { Config } from "../configs/configs";
 import { useContext } from "react";
 import { AppContext } from "../App";
+import path from "../utils/path/path";
 
 const instance = axios.create({
   baseURL: Config.API, // Thay thế bằng URL của API thực tế
@@ -18,7 +19,6 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     const AT = localStorage.getItem("aT");
-    console.log("--------------------------->", AT);
     if (AT) {
       config.headers["Authorization"] = `Bearer ${AT}`;
     }
@@ -36,23 +36,22 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (error.response.status === 400) {
-      console.log(
-        ".............................đăng nhập lại...................................."
-      );
+      window.location.href = path.premissions;
     }
     if (error.response && error.response.status === 401) {
-      // Xử lý logic tại đây để làm mới token hoặc đăng xuất người dùng
-      // Ví dụ:
-      refreshToken()
-        .then((newToken) => {
-          instance.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${newToken}`;
-          console.log(newToken);
-          localStorage.setItem("aT", newToken);
-          return instance(error.config);
-        })
-        .catch((err) => {});
+      setTimeout(() => {
+        // Xử lý logic tại đây để làm mới token hoặc đăng xuất người dùng
+        // Ví dụ:
+        refreshToken()
+          .then((newToken) => {
+            instance.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${newToken}`;
+            localStorage.setItem("aT", newToken);
+            return instance(error.config);
+          })
+          .catch((err) => {});
+      }, 10000);
     }
 
     return Promise.reject(error);
@@ -61,22 +60,14 @@ instance.interceptors.response.use(
 // Hàm làm mới token
 async function refreshToken() {
   const rf = localStorage.getItem("rf");
-  console.log("pppp", rf);
+
   // Thực hiện logic làm mới token và trả về promise chứa token mới
   return instance
-    .post(
-      "/auth/refreshtoken",
-      //gửi body
-      {
-        headers: {
-          // Gửi header Authorization với token hiện tại
-          Authorization: `Bearer ${rf}`,
-        },
-      }
-    )
+    .post("/auth/refreshtoken", {
+      refreshToken: rf,
+    })
     .then((response) => {
-      console.log("-----<<<<", response);
-      return response.data.newToken;
+      return response.data.data.accessToken;
     });
 }
 export default instance;
