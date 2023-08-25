@@ -357,9 +357,9 @@ export default function Drink() {
                   <div className="px-40 py-2 bg-orage-100-ct text-center text-white  text-lg rounded-md cursor-pointer">
                     <b>Sửa</b>
                   </div>
-                  <div className="px-40 py-2 bg-red-600 text-center text-white  text-lg rounded-md cursor-pointer">
+                  {/* <div className="px-40 py-2 bg-red-600 text-center text-white  text-lg rounded-md cursor-pointer">
                     <b>Xóa</b>
-                  </div>
+                  </div> */}
                 </div>
               ) : (
                 <div className="w-full flex justify-center items-center flex-col gap-3">
