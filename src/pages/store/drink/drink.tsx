@@ -1,41 +1,79 @@
 import { useDropzone } from "react-dropzone";
 
 import { ItemAdd, ItemShow } from "../../../component/item/ItemAdd";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ItemAddOption from "../../../component/item/itemAddOption";
 import { useLocation } from "react-router-dom";
+import { useFormik } from "formik";
+import { vlDrink } from "../../../utils/rule/rule_Drink";
+import { error } from "console";
+import { vlOption } from "../../../utils/rule/rule_Option";
 
-const arr = [
-  {
-    size: "S",
-    price: 20000,
-  },
-  {
-    size: "x",
-    price: 25000,
-  },
-  {
-    size: "L",
-    price: 27000,
-  },
-  {
-    size: "XL",
-    price: 30000,
-  },
-];
+type optionData = {
+  size: string;
+  price: number;
+};
 
 export default function Drink() {
   const { state } = useLocation();
 
-  const [itemTest, setItemTest] = useState(arr);
+  const [itemTest, setItemTest] = useState<optionData[]>([]);
+  const [errorOption, setErrorOption] = useState(false);
   const [file, setFile] = useState("");
+  const [fileAccept, setFileAccept] = useState<File>();
+
+  useEffect(() => {
+    if (itemTest.length < 1) return setErrorOption(true);
+    return setErrorOption(false);
+  }, [itemTest]);
+
+  const formik = useFormik({
+    initialValues: {
+      name_product: "",
+      detail: "",
+    },
+    validationSchema: vlDrink, // Sử dụng validationSchema ở đây
+    onSubmit: (values) => {
+      if (itemTest.length < 1) return setErrorOption(true);
+      if (!fileAccept) return console.log("bạn vui lòng chọn hình");
+      let price = "";
+      let size = "";
+      itemTest.map((i) => {
+        if (!price) {
+          price = `${i.price}`;
+          size = `${i.size}`;
+          return;
+        }
+        price = `${price},${i.price}`;
+        size = `${size},${i.size}`;
+      });
+
+      const newData = {
+        name_product: values.name_product,
+        detail: values.detail,
+        price_product: `[${price}]`,
+        size_product: `[${size}]`,
+        kind_id: 1,
+      };
+      console.log("new data => ", newData);
+    },
+  });
+  const formik1 = useFormik({
+    initialValues: {
+      price: "",
+      size: "",
+    },
+    validationSchema: vlOption, // Sử dụng validationSchema ở đây
+    onSubmit: (values) => {
+      handleAdd(parseInt(values.price), values.size);
+    },
+  });
 
   // pick img
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // Do something with the files
     if (acceptedFiles.length > 0) {
-      console.log("=>", acceptedFiles[0]);
-      // setfile(acceptedFiles[0]);
+      setFileAccept(acceptedFiles[0]);
       setFile(URL.createObjectURL(acceptedFiles[0]));
     }
   }, []);
@@ -48,16 +86,15 @@ export default function Drink() {
     maxFiles: 1, // Giới hạn số lượng tệp tin được chọn thành 1
   });
   const handleRemoveItem = (index: number) => {
-    console.log("=>", index);
     const newItems = itemTest.filter((item, i) => i !== index);
     setItemTest(newItems);
   };
-  const handleAdd = () => {
+  const handleAdd = (price: number, size: string) => {
     const newItem = {
-      price: 25000,
-      size: "XXL",
+      price: price,
+      size: size,
     };
-    console.log("0000");
+
     setItemTest([...itemTest, newItem]);
   };
   return (
@@ -77,7 +114,7 @@ export default function Drink() {
               )}
             </div>
             <div className="pl-5 w-3/4">
-              <div className="mb-4">
+              <form onSubmit={formik.handleSubmit} className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="username"
@@ -86,25 +123,42 @@ export default function Drink() {
                 </label>
                 <input
                   className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                  name="phone"
-                  maxLength={50}
+                  name="name_product"
+                  maxLength={30}
                   type="text"
                   placeholder="Trà sữa"
+                  onChange={formik.handleChange}
+                  value={formik.values.name_product}
                 />
-              </div>
+                <div className="w-full flex justify-end py-1">
+                  <span className="text-red-500 text-xs italic">
+                    {formik.errors.name_product}
+                  </span>
+                </div>
 
-              <div className=" flex flex-col gap-1">
-                {itemTest.map((i, index) => (
-                  <ItemAddOption
-                    price={i.price}
-                    size={i.size}
-                    index={index}
-                    hanleRemove={handleRemoveItem}
-                  />
-                ))}
-              </div>
+                <div className=" flex flex-col gap-1">
+                  {itemTest.map((i, index) => (
+                    <ItemAddOption
+                      price={i.price}
+                      size={i.size}
+                      index={index}
+                      hanleRemove={handleRemoveItem}
+                    />
+                  ))}
+                </div>
 
-              <div className="w-full flex gap-5 items-end">
+                {errorOption && (
+                  <div className="w-full flex flex-col justify-end py-1">
+                    <span className="text-red-500 text-xs italic">
+                      Bạn chưa nhập giá và size
+                    </span>
+                  </div>
+                )}
+              </form>
+              <form
+                onSubmit={formik1.handleSubmit}
+                className="w-full flex gap-5 items-end"
+              >
                 <div className="mb-4 mt-5">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -114,7 +168,9 @@ export default function Drink() {
                   </label>
                   <input
                     className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                    name="phone"
+                    name="size"
+                    onChange={formik1.handleChange}
+                    value={formik1.values.size}
                     maxLength={20}
                     type="text"
                     placeholder="Size X,M,L..."
@@ -130,22 +186,35 @@ export default function Drink() {
 
                   <input
                     className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                    name="phone"
+                    name="price"
+                    onChange={formik1.handleChange}
+                    value={formik1.values.price}
                     maxLength={20}
                     type="number"
                     placeholder="20.000 vnđ"
-                  ></input>
+                  />
                 </div>
                 <div className="mb-4 mt-5 ">
-                  <div
+                  <button
                     className={`shadow appearance-none border rounded w-full py-3 px-5 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-green-80-ct  cursor-pointer`}
-                    onClick={() => handleAdd()}
+                    //onClick={() => handleAdd()}
+                    type="submit"
                   >
                     <b className=" text-white"> Thêm</b>
-                  </div>
+                  </button>
                 </div>
+              </form>
+              <div className="w-full flex justify-end py-1">
+                <span className="text-red-500 text-xs italic">
+                  {formik1.errors.size}
+                </span>
               </div>
-              <div className="w-full h-full">
+              <div className="w-full flex justify-end py-1">
+                <span className="text-red-500 text-xs italic">
+                  {formik1.errors.price}
+                </span>
+              </div>
+              <form onSubmit={formik.handleChange} className="w-full h-full">
                 <div>
                   <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
                     <div className="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
@@ -346,12 +415,20 @@ export default function Drink() {
                         className="block w-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
                         placeholder="Hãy mô tả về cửa hàng của bạn..."
                         required
-                        defaultValue={""}
+                        defaultValue={"detail"}
+                        name="detail"
+                        onChange={formik.handleChange}
+                        value={formik.values.detail}
                       />
+                      <div className="w-full flex justify-end py-1">
+                        <span className="text-red-500 text-xs italic">
+                          {formik.errors.detail}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </form>
               {state ? (
                 <div className="w-full flex justify-center items-center flex-col gap-3">
                   <div className="px-40 py-2 bg-orage-100-ct text-center text-white  text-lg rounded-md cursor-pointer">
@@ -363,7 +440,10 @@ export default function Drink() {
                 </div>
               ) : (
                 <div className="w-full flex justify-center items-center flex-col gap-3">
-                  <div className="px-40 py-2 bg-green-80-ct text-center text-white  text-lg rounded-md cursor-pointer">
+                  <div
+                    className="px-40 py-2 bg-green-80-ct text-center text-white  text-lg rounded-md cursor-pointer"
+                    onClick={() => formik.handleSubmit()}
+                  >
                     <b>Thêm</b>
                   </div>
                 </div>
