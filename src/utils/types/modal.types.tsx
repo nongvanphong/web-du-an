@@ -1,6 +1,14 @@
 export interface Modal {
-  isHidden: boolean;
+  isHidden?: boolean;
   taile?: string;
-  bnt1?: string;
-  bnt2?: string;
+  tailebnt1?: string;
+  bnt1?: boolean;
+  tailebnt2?: string;
+  bnt2: boolean;
+}
+export interface ModalOtp {
+  isHidden: boolean;
+  mail: string;
+  bntSend: () => void;
+  bntrefresh: () => void;
 }

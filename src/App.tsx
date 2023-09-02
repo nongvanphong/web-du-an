@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
@@ -8,19 +8,10 @@ import { Layout } from "./pages/auth/Layout/Layout";
 import useRouteElements from "./router/Router";
 import { Modal_1 } from "./component/modal/modal_1";
 import { Modal } from "./utils/types/modal.types";
+import { boolean } from "yup";
+import ModalOtp from "./component/modal/modalOtp";
 
-type appType = {
-  setIsHidden: (
-    isHidden: boolean,
-    taile?: string,
-    bnt1?: string,
-    bnt2?: string
-  ) => void;
-};
-
-export const AppContext = createContext<appType>({
-  setIsHidden: () => {}, // Hàm mặc định hoặc các giá trị khác tùy theo tình huống
-});
+export const AppContext = createContext<any>(null);
 
 function App() {
   const queryClient = new QueryClient({
@@ -31,38 +22,29 @@ function App() {
     },
   });
   const routeElements = useRouteElements();
-  const [modalState, setModalState] = useState<Modal>({
+  const [isShowMoadalOtp, setIsShowMoadalOtp] = useState<boolean>(false);
+  const [isShowMoadal1, setIsShowMoadal1] = useState<Modal>({
     isHidden: false,
-    bnt1: "",
-    bnt2: "",
     taile: "",
+    bnt1: false,
+    tailebnt1: "",
+    bnt2: false,
+    tailebnt2: "",
   });
-
-  const hanldModal = (
-    isHidden: boolean,
-    taile?: string,
-    bnt1?: string,
-    bnt2?: string
-  ) => {
-    setModalState({
-      isHidden: isHidden,
-      taile: taile || "",
-      bnt1: bnt1 || "",
-      bnt2: bnt2 || "",
-    });
-    console.log("=>", modalState);
+  const hanldeContext = {
+    isShowMoadalOtp,
+    setIsShowMoadalOtp,
+    isShowMoadal1,
+    setIsShowMoadal1,
   };
 
   return (
-    <AppContext.Provider value={{ setIsHidden: hanldModal }}>
+    <AppContext.Provider value={hanldeContext}>
       <QueryClientProvider client={queryClient}>
         <div>
           {routeElements}
-          <Modal_1
-            isHidden={modalState.isHidden}
-            taile={modalState.taile || ""}
-            bnt1={modalState.bnt1 || ""}
-          />
+          <Modal_1 />
+          <ModalOtp />
         </div>
       </QueryClientProvider>
     </AppContext.Provider>

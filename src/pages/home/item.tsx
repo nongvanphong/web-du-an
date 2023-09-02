@@ -15,18 +15,18 @@ export const Item = (props: data) => {
       window.location.href = path.store;
       return;
     }
-    if (props.store.status == 1) {
-      appContext.setIsHidden(
-        true,
-        "Cửa hàng của bạn chưa được kích hoạt!",
-        "Đóng"
-      );
-      return;
-    }
-    if (props.store.status == 2) {
-      appContext.setIsHidden(true, "Cửa hàng của bạn đã bị khóa!", "Đóng");
-      return;
-    }
+    // if (props.store.status == 1) {
+    //   appContext.setIsHidden(
+    //     true,
+    //     "Cửa hàng của bạn chưa được kích hoạt!",
+    //     "Đóng"
+    //   );
+    //   return;
+    // }
+    // if (props.store.status == 2) {
+    //   appContext.setIsHidden(true, "Cửa hàng của bạn đã bị khóa!", "Đóng");
+    //   return;
+    // }
   };
   return (
     <div

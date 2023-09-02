@@ -7,9 +7,10 @@ import { authFetch } from "../../../fetchs/auth/authFetch";
 import path from "../../../utils/path/path";
 import { AppContext } from "../../../App";
 import { useFormik } from "formik";
+import { Modal } from "../../../utils/types/modal.types";
 
 const Login = () => {
-  const appContext = useContext(AppContext);
+  const { setIsShowMoadalOtp, setIsShowMoadal1 } = useContext(AppContext);
 
   const navigate = useNavigate();
 
@@ -17,6 +18,15 @@ const Login = () => {
 
   const loginMutation = useMutation(authFetch.login, {
     onSuccess: (data) => {
+      // if (data.data.info.status == 1) {
+      //   setIsShowMoadal1((p: Modal) => ({
+      //     ...p,
+      //     isHidden: true,
+      //     taile: "Tài khoản của bạn chưa được xác minh!",
+      //   }));
+      //   return;
+      // }
+
       localStorage.setItem("aT", data.data.accessToken);
       localStorage.setItem("rf", data.data.refresh_token);
       localStorage.setItem("if", JSON.stringify(data.data.info));
@@ -26,21 +36,19 @@ const Login = () => {
       window.location.href = path.home;
     },
     onError: (error: any) => {
-      // Xử lý lỗi ở đây, ví dụ hiển thị thông báo lỗi đăng nhập
-      if (error.response.status === 404) {
-        appContext.setIsHidden(
-          true,
-
-          "Bạn chưa có tài khoản!",
-          "Đóng"
-        );
+      if (error.response.status === 403) {
+        setIsShowMoadal1((p: Modal) => ({
+          ...p,
+          isHidden: true,
+          taile: "Tài khoản của bạn chưa được xác minh!",
+        }));
         return;
       }
-      appContext.setIsHidden(
-        true,
-        "Tài khoản hoặc mật khẩu không chính xác!",
-        "Đóng"
-      );
+      setIsShowMoadal1((p: Modal) => ({
+        ...p,
+        isHidden: true,
+        taile: "Tài khoản hoặc mật khẩu không chính xác!",
+      }));
     },
   });
 
@@ -54,7 +62,12 @@ const Login = () => {
       // Call your custom submit function
       //  console.log("===>", values);
       //event.preventDefault();
-      loginMutation.mutate(values);
+      const data = {
+        email: "",
+        phone: values.phone,
+        password: values.password,
+      };
+      loginMutation.mutate(data);
     },
   });
 

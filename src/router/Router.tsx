@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { Layout } from "../pages/auth/Layout/Layout";
 import Login from "../pages/auth/Login/Login";
-import Register from "../pages/auth/Register/Register";
+import Register from "../pages/auth/Register/resgister";
 
 import path from "../utils/path/path";
 import { Home } from "../pages/home/Home";
@@ -16,7 +16,6 @@ import { Store } from "../pages/store/store/store";
 import Manager from "../pages/store/manager/manager";
 import Drink from "../pages/store/drink/drink";
 import Food from "../pages/store/food/food";
-import ResgisterStore from "../pages/store/resgisterSrore/resgisterStore";
 
 import { MainLayout } from "../layout/mainLayout";
 import { AppMainLayout } from "../layout/appMainLayout";
@@ -44,7 +43,7 @@ export default function useRouteElements() {
           path: path.register,
           element: (
             <Layout>
-              <Register />
+              <Register />,
             </Layout>
           ),
         },
@@ -92,14 +91,7 @@ export default function useRouteElements() {
             </MainLayout>
           ),
         },
-        {
-          path: path.registerSrore,
-          element: (
-            <AppMainLayout>
-              <ResgisterStore />
-            </AppMainLayout>
-          ),
-        },
+
         {
           path: path.premissions,
           element: <Premissions />,

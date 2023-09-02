@@ -6,15 +6,18 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import path from "../../../utils/path/path";
 import { User } from "../../../utils/types/user.types";
 import { useFormik } from "formik";
-import { validationSchema } from "../../../utils/rule/rule_Register_Store";
+import { valiRegister } from "../../../utils/rule/rule_Register";
 import { useMutation, useQueryClient } from "react-query";
 import { storeFetch } from "../../../fetchs/store/store";
 import { AppContext } from "../../../App";
+import ModalOtp from "../../../component/modal/modalOtp";
+import { authFetch } from "../../../fetchs/auth/authFetch";
+import { Modal } from "../../../utils/types/modal.types";
 
-export default function ResgisterStore() {
+export default function Resgister() {
   const [file, setFile] = useState("");
   const [user, setUser] = useState<User>();
-  const appContext = useContext(AppContext);
+  const { setIsShowMoadalOtp, setIsShowMoadal1 } = useContext(AppContext);
   useEffect(() => {
     const data = localStorage.getItem("if");
     if (data) {
@@ -54,33 +57,45 @@ export default function ResgisterStore() {
 
     return { lat_store, long_store };
   };
-  const loginMutation = useMutation(storeFetch.Register, {
+  const loginMutation = useMutation(authFetch.Register, {
     onSuccess: (data) => {
       // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
       // Làm mới dữ liệu sau khi đăng nhập thành công
-      appContext.setIsHidden(
-        true,
-        "Đăng kí thành công. Vui lòng đợi admin xác nhận!",
-        "Đóng"
-      );
       //window.location.reload();
+      setIsShowMoadalOtp(true);
     },
     onError: (error: any) => {
-      // Xử lý lỗi ở đây, ví dụ hiển thị thông báo lỗi đăng nhập
       if (error.response.status === 400) {
-        appContext.setIsHidden(true, "Đăng kí thất bại!", "Đóng");
+        setIsShowMoadal1((p: Modal) => ({
+          ...p,
+          isHidden: true,
+          taile: "Đăng kí thất bại! Vui lòng thử lại!",
+        }));
+        return;
+      }
+      if (error.response.status === 409) {
+        //appContext.setIsHidden(true, "Đăng kí thất bại!", "Đóng");
+        setIsShowMoadal1((p: Modal) => ({
+          ...p,
+          isHidden: true,
+          taile: "Gmail và số điện thoại cửa hàng đã được sử dụng!",
+        }));
         return;
       }
     },
   });
   const formik = useFormik({
     initialValues: {
-      phone_store: "",
-      name_store: "",
-      time_close: "",
+      email: "",
+      store_phone_number: "",
+      store_name: "",
+      manager_phone_number: "",
+      address: "",
+      password: "",
       describe: "",
+      confirmPassword: "",
     },
-    validationSchema: validationSchema, // Sử dụng validationSchema ở đây
+    validationSchema: valiRegister, // Sử dụng validationSchema ở đây
     onSubmit: async (values) => {
       const { lat_store, long_store } = await fetchCoordinates();
 
@@ -89,14 +104,17 @@ export default function ResgisterStore() {
       }
 
       const data = {
-        phone_store: values.phone_store,
-        name_store: values.name_store,
-        time_close: values.time_close,
+        email: values.email,
+        manager_phone_number: values.manager_phone_number,
+        store_phone_number: values.store_phone_number,
+        address: values.address,
         describe: values.describe,
-        lat_store: lat_store,
-        long_store: long_store,
-        address_store: "test",
+        store_name: values.store_name,
+        password: values.password,
+        lat: lat_store,
+        long: long_store,
       };
+
       loginMutation.mutate(data);
     },
   });
@@ -120,7 +138,7 @@ export default function ResgisterStore() {
   });
 
   return (
-    <div className="w-full h-full overflow-hidden p-5 bg-gray-ct">
+    <div className="w-full h-full overflow-hidden  bg-gray-ct">
       <div className="w-full h-full overflow-hidden p-5">
         <div>
           <b className="text-xl">Đăng kí dịch vụ</b>
@@ -131,24 +149,17 @@ export default function ResgisterStore() {
             type="button" // Để tránh hành vi mặc định của nút submit trong form
             onClick={() => formik.handleSubmit()}
           >
-            <b>Xác nhận</b>
+            <b>Đăng kí</b>
           </button>
           <div
-            className="px-5 py-3 bg-yellow-80-ct rounded-2xl text-white cursor-pointer"
-            onClick={() => window.location.reload()}
-          >
-            <b>Làm mới</b>
-          </div>
-          <div
             className="px-5 py-3 bg-red-80-ct rounded-2xl text-white cursor-pointer"
-            onClick={() => navigate(path.home)}
+            onClick={() => navigate(path.login)}
           >
             <b>Hủy</b>
           </div>
         </div>
-
         <form
-          className="w-full h-full  overflow-scroll pt-3  flex gap-3"
+          className="w-full  h-[calc(100%-60px)]  overflow-scroll pt-3  flex gap-3"
           onSubmit={formik.handleSubmit}
         >
           <div className="w-full h-full">
@@ -167,20 +178,42 @@ export default function ResgisterStore() {
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="username"
                   >
+                    Nhập email cửa hàng
+                  </label>
+                  <input
+                    className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
+                    type="email"
+                    placeholder="Email"
+                    name="email"
+                    maxLength={50}
+                    onChange={formik.handleChange}
+                    value={formik.values.email}
+                  />
+                  <div className="w-full flex justify-end py-1">
+                    <span className="text-red-500 text-xs italic">
+                      {formik.errors.email}
+                    </span>
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                    htmlFor="username"
+                  >
                     Nhập tên cửa hàng
                   </label>
                   <input
                     className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
                     type="text"
                     placeholder="Tên cửa hàng"
-                    name="name_store"
+                    name="store_name"
                     maxLength={100}
                     onChange={formik.handleChange}
-                    value={formik.values.name_store}
+                    value={formik.values.store_name}
                   />
                   <div className="w-full flex justify-end py-1">
                     <span className="text-red-500 text-xs italic">
-                      {formik.errors.name_store}
+                      {formik.errors.store_name}
                     </span>
                   </div>
                 </div>
@@ -193,58 +226,17 @@ export default function ResgisterStore() {
                   </label>
                   <input
                     className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                    type="text"
-                    placeholder="0397777777"
-                    name="phone_store"
+                    type="number"
+                    placeholder="số điện thoại"
+                    name="store_phone_number"
                     maxLength={10}
                     onChange={formik.handleChange}
-                    value={formik.values.phone_store}
+                    value={formik.values.store_phone_number}
                   />
                   <div className="w-full flex justify-end py-1">
                     <span className="text-red-500 text-xs italic">
-                      {formik.errors.phone_store}
+                      {formik.errors.store_phone_number}
                     </span>
-                  </div>
-                </div>
-                <div className="w-full flex gap-5">
-                  <div className="mb-4 mt-5">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="username"
-                    >
-                      Giờ mở
-                    </label>
-                    <input
-                      className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                      name="phone"
-                      maxLength={20}
-                      type="text"
-                      placeholder="Mở thủ công"
-                      disabled={true}
-                    />
-                  </div>
-                  <div className="mb-4 mt-5">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="username"
-                    >
-                      Giờ đóng cửa
-                    </label>
-
-                    <input
-                      className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                      maxLength={5}
-                      type="text"
-                      placeholder="20:30"
-                      name="time_close"
-                      onChange={formik.handleChange}
-                      value={formik.values.time_close}
-                    />
-                    <div className="w-full flex justify-end py-1">
-                      <span className="text-red-500 text-xs italic">
-                        {formik.errors.time_close}
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -254,17 +246,87 @@ export default function ResgisterStore() {
                 className="block text-gray-700 text-sm font-bold mb-2"
                 htmlFor="username"
               >
-                Tên chủ cửa hàng
+                Số điện thoại chủ cửa hàng
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                name="phone"
-                maxLength={50}
-                type="text"
-                placeholder={user?.user_name}
-                value={user?.user_name}
-                disabled={true}
+                name="manager_phone_number"
+                maxLength={10}
+                type="number"
+                onChange={formik.handleChange}
+                value={formik.values.manager_phone_number}
               />
+              <div className="w-full flex justify-end py-1">
+                <span className="text-red-500 text-xs italic">
+                  {formik.errors.manager_phone_number}
+                </span>
+              </div>
+            </div>
+            <div className="mb-4 mt-5">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="username"
+              >
+                Địa chỉ cửa hàng
+              </label>
+              <input
+                className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
+                name="address"
+                maxLength={150}
+                type="text"
+                placeholder="Địa chỉ"
+                onChange={formik.handleChange}
+                value={formik.values.address}
+              />
+              <div className="w-full flex justify-end py-1">
+                <span className="text-red-500 text-xs italic">
+                  {formik.errors.address}
+                </span>
+              </div>
+            </div>
+            <div className="mb-4 mt-5">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="username"
+              >
+                Nhập mật khẩu
+              </label>
+              <input
+                className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
+                name="password"
+                maxLength={15}
+                type="password"
+                placeholder="password"
+                onChange={formik.handleChange}
+                value={formik.values.password}
+              />
+              <div className="w-full flex justify-end py-1">
+                <span className="text-red-500 text-xs italic">
+                  {formik.errors.password}
+                </span>
+              </div>
+            </div>
+            <div className="mb-4 mt-5">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="username"
+              >
+                Nhập lại mật khẩu
+              </label>
+              <input
+                className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
+                maxLength={15}
+                type="password"
+                placeholder="confirmPassword"
+                name="confirmPassword"
+                onChange={formik.handleChange}
+                value={formik.values.confirmPassword}
+              />
+              <div className="w-full flex justify-end py-1">
+                <span className="text-red-500 text-xs italic">
+                  {formik.errors.confirmPassword}
+                </span>
+              </div>
             </div>
           </div>
           <div className="w-full h-full">
@@ -470,7 +532,7 @@ export default function ResgisterStore() {
                     required
                     defaultValue={""}
                     name="describe"
-                    maxLength={2000}
+                    maxLength={500}
                     onChange={formik.handleChange}
                     value={formik.values.describe}
                   />
