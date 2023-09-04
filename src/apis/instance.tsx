@@ -66,7 +66,7 @@ async function refreshToken() {
 
   // Thực hiện logic làm mới token và trả về promise chứa token mới
   return instance
-    .post("/auth/refreshtoken", {
+    .post("/store/auth/refreshtoken", {
       refreshToken: rf,
     })
     .then((response) => {

@@ -10,7 +10,7 @@ import Login from "../pages/auth/Login/Login";
 import Register from "../pages/auth/Register/resgister";
 
 import path from "../utils/path/path";
-import { Home } from "../pages/home/Home";
+
 import { Store } from "../pages/store/store/store";
 
 import Manager from "../pages/store/manager/manager";
@@ -47,10 +47,7 @@ export default function useRouteElements() {
             </Layout>
           ),
         },
-        {
-          path: path.home,
-          element: <Home />,
-        },
+
         {
           path: path.store,
           element: (

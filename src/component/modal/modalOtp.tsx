@@ -14,7 +14,7 @@ import path from "../../utils/path/path";
 // };
 
 export default function ModalOtp() {
-  const { isShowMoadalOtp } = useContext(AppContext);
+  const { isShowMoadalOtp, email } = useContext(AppContext);
 
   const loginMutation = useMutation(authFetch.Sendcode, {
     onSuccess: (data) => {
@@ -45,7 +45,7 @@ export default function ModalOtp() {
     validationSchema: vlOtp, // Sử dụng validationSchema ở đây
     onSubmit: async (v) => {
       const newData = {
-        email: "nongvanphong21012002@gmail.com",
+        email: email,
         codes: `${v.n1}${v.n2}${v.n3}${v.n4}${v.n5}${v.n6}`,
       };
       loginMutation.mutate(newData);
@@ -74,7 +74,7 @@ export default function ModalOtp() {
 
   const handleRefresh = () => {
     const newData = {
-      email: "nongvanphong21012002@gmail.com",
+      email: email,
       codes: null,
     };
     loginMutation.mutate(newData);
