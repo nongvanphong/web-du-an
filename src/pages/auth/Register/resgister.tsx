@@ -8,7 +8,7 @@ import { User } from "../../../utils/types/user.types";
 import { useFormik } from "formik";
 import { valiRegister } from "../../../utils/rule/rule_Register";
 import { useMutation, useQueryClient } from "react-query";
-import { storeFetch } from "../../../fetchs/store/store";
+
 import { AppContext } from "../../../App";
 import ModalOtp from "../../../component/modal/modalOtp";
 import { authFetch } from "../../../fetchs/auth/authFetch";
@@ -70,6 +70,8 @@ export default function Resgister() {
           ...p,
           isHidden: true,
           taile: "Đăng kí thất bại! Vui lòng thử lại!",
+          tailebnt1: "Đóng",
+          showBotton: 1,
         }));
         return;
       }
@@ -79,6 +81,8 @@ export default function Resgister() {
           ...p,
           isHidden: true,
           taile: "Gmail và số điện thoại cửa hàng đã được sử dụng!",
+          tailebnt1: "Đóng",
+          showBotton: 1,
         }));
         return;
       }
@@ -226,7 +230,7 @@ export default function Resgister() {
                   </label>
                   <input
                     className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
-                    type="number"
+                    type="text"
                     placeholder="số điện thoại"
                     name="store_phone_number"
                     maxLength={10}
@@ -252,7 +256,8 @@ export default function Resgister() {
                 className={`shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline `}
                 name="manager_phone_number"
                 maxLength={10}
-                type="number"
+                type="text"
+                placeholder="Số điện thoại"
                 onChange={formik.handleChange}
                 value={formik.values.manager_phone_number}
               />

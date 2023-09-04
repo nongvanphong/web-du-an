@@ -23,6 +23,7 @@ function App() {
   });
   const routeElements = useRouteElements();
   const [isShowMoadalOtp, setIsShowMoadalOtp] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
   const [isShowMoadal1, setIsShowMoadal1] = useState<Modal>({
     isHidden: false,
     taile: "",
@@ -30,12 +31,17 @@ function App() {
     tailebnt1: "",
     bnt2: false,
     tailebnt2: "",
+    showBotton: 0,
+    type: "",
   });
+
   const hanldeContext = {
     isShowMoadalOtp,
     setIsShowMoadalOtp,
     isShowMoadal1,
     setIsShowMoadal1,
+    email,
+    setEmail,
   };
 
   return (

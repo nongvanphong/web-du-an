@@ -1,13 +1,19 @@
 import { useDropzone } from "react-dropzone";
 
 import { ItemAdd, ItemShow } from "../../../component/item/ItemAdd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import ItemAddOption from "../../../component/item/itemAddOption";
 import { useLocation } from "react-router-dom";
 import { useFormik } from "formik";
 import { vlDrink } from "../../../utils/rule/rule_Drink";
 import { error } from "console";
 import { vlOption } from "../../../utils/rule/rule_Option";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { CategreyFetch } from "../../../fetchs/categrey.fechs";
+import { Categrey } from "../../../utils/types/categrey.types";
+import { AppContext } from "../../../App";
+import { Modal } from "../../../utils/types/modal.types";
+import { ProductFetch } from "../../../fetchs/product.fetch";
 
 type optionData = {
   size: string;
@@ -15,18 +21,58 @@ type optionData = {
 };
 
 export default function Drink() {
+  const { setIsShowMoadalOtp, setIsShowMoadal1 } = useContext(AppContext);
   const { state } = useLocation();
-
+  const queryClient = useQueryClient();
   const [itemTest, setItemTest] = useState<optionData[]>([]);
-  const [errorOption, setErrorOption] = useState(false);
+
   const [file, setFile] = useState("");
   const [fileAccept, setFileAccept] = useState<File>();
+  const [selectedValue, setSelectedValue] = useState("");
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["categrey"],
+    queryFn: () => CategreyFetch.All(),
+    keepPreviousData: true,
+    retry: 0,
+    cacheTime: 10000,
+  });
 
   useEffect(() => {
-    if (itemTest.length < 1) return setErrorOption(true);
-    return setErrorOption(false);
-  }, [itemTest]);
+    if (!data) return;
 
+    setSelectedValue(data.data[0].id);
+  }, [data]);
+  const loginMutation = useMutation(ProductFetch.Create, {
+    onSuccess: (data) => {
+      // if (data.data.info.status == 1) {
+      //   setIsShowMoadal1((p: Modal) => ({
+      //     ...p,
+      //     isHidden: true,
+      //     taile: "Tài khoản của bạn chưa được xác minh!",
+      //   }));
+      //   return;
+      // }
+      setIsShowMoadal1((p: Modal) => ({
+        ...p,
+        isHidden: true,
+        taile: "Thành công!",
+        tailebnt1: "Đóng",
+        showBotton: 1,
+        type: "",
+      }));
+    },
+    onError: (error: any) => {
+      setIsShowMoadal1((p: Modal) => ({
+        ...p,
+        isHidden: true,
+        taile: "Thất bại!",
+        tailebnt1: "Đóng",
+        showBotton: 1,
+        type: "",
+      }));
+    },
+  });
   const formik = useFormik({
     initialValues: {
       name_product: "",
@@ -34,28 +80,59 @@ export default function Drink() {
     },
     validationSchema: vlDrink, // Sử dụng validationSchema ở đây
     onSubmit: (values) => {
-      if (itemTest.length < 1) return setErrorOption(true);
-      if (!fileAccept) return console.log("bạn vui lòng chọn hình");
+      if (!selectedValue || parseInt(selectedValue) < 0) {
+        setIsShowMoadal1((p: Modal) => ({
+          ...p,
+          isHidden: true,
+          taile: "Bạn chưa chọn loại cho sản phẩm!",
+          tailebnt1: "Đóng",
+          showBotton: 1,
+          type: "",
+        }));
+        return;
+      }
+      if (itemTest.length < 1) {
+        setIsShowMoadal1((p: Modal) => ({
+          ...p,
+          isHidden: true,
+          taile: "Bạn chưa nhập giá với size cho sản phẩm!",
+          tailebnt1: "Đóng",
+          showBotton: 1,
+          type: "",
+        }));
+        return;
+      }
+      if (!fileAccept) {
+        setIsShowMoadal1((p: Modal) => ({
+          ...p,
+          isHidden: true,
+          taile: "Bạn chưa chọn hình cho sản phẩm!",
+          tailebnt1: "Đóng",
+          showBotton: 1,
+          type: "",
+        }));
+        return;
+      }
       let price = "";
       let size = "";
       itemTest.map((i) => {
         if (!price) {
           price = `${i.price}`;
-          size = `${i.size}`;
+          size = `"${i.size}"`;
           return;
         }
         price = `${price},${i.price}`;
-        size = `${size},${i.size}`;
+        size = `${size},"${i.size}"`;
       });
 
-      const newData = {
-        name_product: values.name_product,
-        detail: values.detail,
-        price_product: `[${price}]`,
-        size_product: `[${size}]`,
-        kind_id: 1,
-      };
-      console.log("new data => ", newData);
+      const formDataToSend = new FormData();
+      formDataToSend.append("file", fileAccept);
+      formDataToSend.append("pr_size", `[${size}]`);
+      formDataToSend.append("pr_price", `[${price}]`);
+      formDataToSend.append("detail", values.detail);
+      formDataToSend.append("name_product", values.name_product);
+      formDataToSend.append("cg_id", selectedValue);
+      loginMutation.mutate(formDataToSend);
     },
   });
   const formik1 = useFormik({
@@ -119,6 +196,25 @@ export default function Drink() {
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="username"
                 >
+                  Phân loại
+                </label>
+
+                <select
+                  id="default"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={selectedValue} // Đặt giá trị được chọn từ trạng thái của bạn
+                  onChange={(e) => setSelectedValue(e.target.value)} // Xử lý sự kiện khi người dùng thay đổi giá trị
+                >
+                  {!isLoading &&
+                    data.data.map((item: Categrey, index: number) => (
+                      <option value={item.id}>{item.cg_name}</option>
+                    ))}
+                </select>
+
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="username"
+                >
                   Tên đồ uống
                 </label>
                 <input
@@ -146,14 +242,6 @@ export default function Drink() {
                     />
                   ))}
                 </div>
-
-                {errorOption && (
-                  <div className="w-full flex flex-col justify-end py-1">
-                    <span className="text-red-500 text-xs italic">
-                      Bạn chưa nhập giá và size
-                    </span>
-                  </div>
-                )}
               </form>
               <form
                 onSubmit={formik1.handleSubmit}

@@ -6,7 +6,7 @@ import path from "../../utils/path/path";
 import { useContext, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { AppContext } from "../../App";
-import { storeFetch } from "../../fetchs/store/store";
+
 import { boolean } from "yup";
 import { Store } from "../../utils/types/store.types";
 import { ErrorResponse } from "../../utils/types/status.typer";
@@ -21,7 +21,7 @@ export const Home = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["store"],
-    queryFn: () => storeFetch.getAllStore(),
+    queryFn: () => "storeFetch.getAllStore()",
     keepPreviousData: true,
     retry: 0,
     cacheTime: 10000,
@@ -40,15 +40,15 @@ export const Home = () => {
     }
   }
 
-  const hanleClick = () => {
-    if (!data) return;
-    if (data.count < 5) {
-      return (window.location.href = path.registerSrore);
-    }
-  };
+  // const hanleClick = () => {
+  //   if (!data) return;
+  //   if (data.count < 5) {
+  //     return (window.location.href = path.registerSrore);
+  //   }
+  // };
   return (
     <div className="w-full h-screen bg-ct-orange p-ct-50 ">
-      <div className="hidden-scroll-a  w-full h-full bg-ct-white flex rounded-3xl  p-12 overflow-x-hidden overflow-y-scroll">
+      {/* <div className="hidden-scroll-a  w-full h-full bg-ct-white flex rounded-3xl  p-12 overflow-x-hidden overflow-y-scroll">
         <div className="w-full ">
           {!isLoadingdata && (
             <div>
@@ -65,7 +65,7 @@ export const Home = () => {
                       Thêm cửa hàng
                     </button>
                     {/* Dropdown menu */}
-                  </div>
+      {/* </div>
                 </div>
               ) : null}
             </div>
@@ -100,17 +100,17 @@ export const Home = () => {
               </tr>
             </thead>
             <tbody>
-              {isLoadingdata ? (
+              {/* {isLoadingdata ? (
                 <div>load....</div>
               ) : (
                 data.data.map((i: Store, index: number) => (
                   <ItemStore index={index + 1} key={i.id} store={i} />
                 ))
-              )}
-            </tbody>
+              )} */}
+      {/* </tbody>
           </table>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

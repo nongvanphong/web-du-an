@@ -5,6 +5,8 @@ export interface Modal {
   bnt1?: boolean;
   tailebnt2?: string;
   bnt2: boolean;
+  showBotton: number;
+  type?: string;
 }
 export interface ModalOtp {
   isHidden: boolean;

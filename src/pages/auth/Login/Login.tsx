@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
 
 import { validationSchema } from "../../../utils/rule/rule_Login";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { authFetch } from "../../../fetchs/auth/authFetch";
 import path from "../../../utils/path/path";
 import { AppContext } from "../../../App";
@@ -33,21 +33,49 @@ const Login = () => {
       // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
       // Làm mới dữ liệu sau khi đăng nhập thành công
       queryClient.invalidateQueries("data");
-      window.location.href = path.home;
+      window.location.href = path.store;
     },
     onError: (error: any) => {
       if (error.response.status === 403) {
-        setIsShowMoadal1((p: Modal) => ({
-          ...p,
-          isHidden: true,
-          taile: "Tài khoản của bạn chưa được xác minh!",
-        }));
-        return;
+        switch (error.response.data.msg) {
+          case "verify Otp!":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn chưa được xác minh!",
+              tailebnt2: "Tiếp tục xác minh",
+              showBotton: 2,
+              type: "VERIFY_OTP",
+            }));
+            return;
+
+          case "lock account!":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn đã bị khóa",
+              tailebnt1: "Đóng",
+              showBotton: 1,
+            }));
+            return;
+
+          case "Wait for admin to verify":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn đang đợi admin xét duyệt",
+              tailebnt1: "Đóng",
+              showBotton: 1,
+            }));
+            return;
+        }
       }
       setIsShowMoadal1((p: Modal) => ({
         ...p,
         isHidden: true,
         taile: "Tài khoản hoặc mật khẩu không chính xác!",
+        tailebnt1: "Đóng",
+        showBotton: 1,
       }));
     },
   });
@@ -67,6 +95,7 @@ const Login = () => {
         phone: values.phone,
         password: values.password,
       };
+
       loginMutation.mutate(data);
     },
   });
