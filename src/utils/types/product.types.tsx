@@ -1,3 +1,4 @@
+import { Sizes } from "./size.typer";
 export interface Product {
   id: number;
   store_id: number;
@@ -5,8 +6,9 @@ export interface Product {
   name_product?: string;
   image_product?: string;
   detail?: string;
-  status?: string;
+  status: number;
   file?: File;
   pr_size?: string;
   pr_price?: string;
+  Sizes: Sizes[];
 }

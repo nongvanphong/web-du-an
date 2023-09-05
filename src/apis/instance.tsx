@@ -42,19 +42,21 @@ instance.interceptors.response.use(
       window.location.href = path.premissions;
     }
     if (error.response && error.response.status === 401) {
-      setTimeout(() => {
-        // Xử lý logic tại đây để làm mới token hoặc đăng xuất người dùng
-        // Ví dụ:
-        refreshToken()
-          .then((newToken) => {
-            instance.defaults.headers.common[
-              "Authorization"
-            ] = `Bearer ${newToken}`;
-            localStorage.setItem("aT", newToken);
-            return instance(error.config);
-          })
-          .catch((err) => {});
-      }, 10000);
+      // setTimeout(() => {
+      // Xử lý logic tại đây để làm mới token hoặc đăng xuất người dùng
+      // Ví dụ:
+      refreshToken()
+        .then((newToken) => {
+          console.log("===================1");
+          instance.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${newToken}`;
+          localStorage.setItem("aT", newToken);
+          console.log("===================2");
+          return instance(error.config);
+        })
+        .catch((err) => {});
+      // }, 10000);
     }
 
     return Promise.reject(error);
@@ -63,7 +65,6 @@ instance.interceptors.response.use(
 // Hàm làm mới token
 async function refreshToken() {
   const rf = localStorage.getItem("rf");
-
   // Thực hiện logic làm mới token và trả về promise chứa token mới
   return instance
     .post("/store/auth/refreshtoken", {

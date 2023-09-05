@@ -6,7 +6,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import path from "../../../utils/path/path";
 import { User } from "../../../utils/types/user.types";
 import { useFormik } from "formik";
-import { valiRegister } from "../../../utils/rule/rule_Register";
+import { valiRegister } from "../../../utils/rule/rule_register";
 import { useMutation, useQueryClient } from "react-query";
 
 import { AppContext } from "../../../App";

@@ -5,10 +5,21 @@ import { ItemAdd } from "../../../component/item/ItemAdd";
 import { useNavigate } from "react-router-dom";
 import ItemProduct from "../../../component/item/itemProduct";
 import ItemProducts from "../../../component/item/itemProducts";
+import { useQuery } from "react-query";
+import { ProductFetch } from "../../../fetchs/product.fetch";
+import { Product } from "../../../utils/types/product.types";
 
 export default function ListDrink() {
   const navigate = useNavigate();
   const array = [1, 2, 3, 2, 3, 3, 3, 3, 4, 4];
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["product"],
+    queryFn: () => ProductFetch.All(-1),
+    keepPreviousData: true,
+    retry: 1,
+    cacheTime: 10000,
+  });
+  console.log(data, isLoading, error);
   const hanleClick = () => {
     navigate(path.managerDrink);
   };
@@ -45,9 +56,10 @@ export default function ListDrink() {
           </tr>
         </thead>
         <tbody className="text-gray-600 text-sm font-light ">
-          {array.map((i) => (
-            <ItemProducts />
-          ))}
+          {!isLoading &&
+            data.data.map((i: Product, index: number) => (
+              <ItemProducts index={index} product={i} />
+            ))}
         </tbody>
       </table>
       <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">

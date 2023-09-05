@@ -1,28 +1,67 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import path from "../../utils/path/path";
+import { Product } from "../../utils/types/product.types";
+import { Sizes } from "./../../utils/types/size.typer";
+import { User } from "../../utils/types/user.types";
+import { useMutation } from "react-query";
+import { ProductFetch } from "../../fetchs/product.fetch";
 
-export default function ItemProducts() {
+type dataProduct = {
+  index: number;
+  product: Product;
+};
+export default function ItemProducts(props: dataProduct) {
   const navigate = useNavigate();
-  const [acction, setAcction] = useState(true);
+  const [user, setUser] = useState<User>();
+  const [acction, setAcction] = useState<number>(props.product.status);
+  useEffect(() => {
+    const userText = localStorage.getItem("if");
+    if (!userText) return;
+    setUser(JSON.parse(userText));
+  }, []);
+  const loginMutation = useMutation(ProductFetch.Acction, {
+    onSuccess: (data) => {
+      console.log("thành công");
+    },
+    onError: (error: any) => {
+      console.log("thất bại====> ", error);
+    },
+  });
   const handleAcction = () => {
-    if (acction) return setAcction(false);
-    setAcction(true);
+    if (acction == 0) {
+      setAcction(1);
+      const dataUpdate = {
+        id: props.product.id,
+        acction: 1,
+      };
+      loginMutation.mutate(dataUpdate);
+
+      return;
+    }
+    setAcction(0);
+    const dataUpdate = {
+      id: props.product.id,
+      acction: 0,
+    };
+    loginMutation.mutate(dataUpdate);
+    return;
   };
   const hanldeEdit = () => {
     navigate(path.managerDrink, { state: { test: "1" } });
   };
+
   return (
     <tr className="border-b border-gray-200 hover:bg-yellow-50">
       <td className="py-3 px-6 text-left whitespace-nowrap">
-        <div>1</div>
+        <div>{props.index + 1}</div>
       </td>
       <td className="py-3 px-6 text-left whitespace-nowrap">
         <div className="flex items-center">
           <div className="mr-2">
             <img
               className="w-10 h-10 rounded-full border-gray-200 border transform hover:scale-125"
-              src="https://randomuser.me/api/portraits/men/1.jpg"
+              src={`http://localhost:1234/store/${user?.id}/product/${props.product.image_product}`}
             />
           </div>
         </div>
@@ -30,34 +69,34 @@ export default function ItemProducts() {
       <td className="py-3 px-6 text-left">
         <div className="flex items-center">
           <div className="mr-2">
-            <span className="font-medium">trà sữa chân châu</span>
+            <span className="font-medium">{props.product.name_product}</span>
           </div>
         </div>
       </td>
       <td className="py-3 px-6 text-center">
         <div className="flex flex-col items-center justify-center">
-          <div className="font-bold">20000</div>
-          <div className="font-bold">20000</div>
-          <div className="font-bold">20000</div>
+          {props.product.Sizes.map((i: Sizes) => (
+            <div className="font-bold">{i.pr_price}</div>
+          ))}
         </div>
       </td>
       <td className="py-3 px-6 text-center">
         <div className="flex flex-col items-center justify-center">
-          <div className="font-bold">X</div>
-          <div className="font-bold">M</div>
-          <div className="font-bold">L</div>
+          {props.product.Sizes.map((i: Sizes) => (
+            <div className="font-bold">{i.pr_size}</div>
+          ))}
         </div>
       </td>
       <td className="py-3 px-6 text-center">
         <span
           className={`  ${
-            acction == true
+            acction == 0
               ? "bg-purple-200 text-purple-600"
               : "bg-orange-200 text-orange-600"
           } py-1 px-3 rounded-full text-xs cursor-pointer`}
           onClick={handleAcction}
         >
-          {acction ? "Còn hàng" : "Hết hàng"}
+          {acction == 0 ? "Còn hàng" : "Hết hàng"}
         </span>
       </td>
       <td className="py-3 px-6 text-center">

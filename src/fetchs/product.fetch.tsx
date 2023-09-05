@@ -9,6 +9,16 @@ const Create = async (data: any) => {
   }); // Thay thế bằng endpoint thực tế
   return response.data;
 };
+const Acction = async (data: any) => {
+  const response = await instance.post("/store/product/acction", data);
+  return response.data;
+};
+const All = async (id: number) => {
+  const response = await instance.get("/store/product/all"); // Thay thế bằng endpoint thực tế
+  return response.data;
+};
 export const ProductFetch = {
   Create,
+  All,
+  Acction,
 };
