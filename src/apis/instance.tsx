@@ -47,12 +47,10 @@ instance.interceptors.response.use(
       // Ví dụ:
       refreshToken()
         .then((newToken) => {
-          console.log("===================1");
           instance.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${newToken}`;
           localStorage.setItem("aT", newToken);
-          console.log("===================2");
           return instance(error.config);
         })
         .catch((err) => {});
