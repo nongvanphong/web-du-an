@@ -5,9 +5,6 @@ import {
   useNavigate,
   useRoutes,
 } from "react-router-dom";
-import { Layout } from "../pages/auth/Layout/Layout";
-import Login from "../pages/auth/Login/Login";
-import Register from "../pages/auth/Register/resgister";
 
 import path from "../utils/path/path";
 
@@ -25,6 +22,10 @@ import ListDrink from "./../pages/store/drink/listDrink";
 import { Premissions } from "../pages/premission/premissions";
 import Notfail from "../pages/premission/notfail";
 
+import { Layout } from "../../src/layout/index";
+import { Login } from "../pages/auth/Login/index";
+import { Resgister } from "../pages/auth/Register/index";
+
 export default function useRouteElements() {
   const navigate = useNavigate();
   const routes = useRoutes([
@@ -34,17 +35,17 @@ export default function useRouteElements() {
         {
           path: path.login,
           element: (
-            <Layout>
-              <Login />
-            </Layout>
+            <Layout.LayoutAuth>
+              <Login.Login2 />
+            </Layout.LayoutAuth>
           ),
         },
         {
           path: path.register,
           element: (
-            <Layout>
-              <Register />,
-            </Layout>
+            <Layout.LayoutAuth>
+              <Resgister.Resgister2 />
+            </Layout.LayoutAuth>
           ),
         },
 
