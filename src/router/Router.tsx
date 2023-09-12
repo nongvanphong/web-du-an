@@ -41,6 +41,22 @@ export default function useRouteElements() {
           ),
         },
         {
+          path: path.loginEmail,
+          element: (
+            <Layout.LayoutAuth>
+              <Login.LoginEmail />
+            </Layout.LayoutAuth>
+          ),
+        },
+        {
+          path: path.loginPhoneNumber,
+          element: (
+            <Layout.LayoutAuth>
+              <Login.LoginPhone />
+            </Layout.LayoutAuth>
+          ),
+        },
+        {
           path: path.register,
           element: (
             <Layout.LayoutAuth>

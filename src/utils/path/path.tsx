@@ -1,6 +1,8 @@
 const path = {
   /* Authenticate */
   login: "/auth/login",
+  loginEmail: "/auth/login/email",
+  loginPhoneNumber: "/auth/phone",
   register: "/auth/register",
   home: "/home",
   store: "/store",
