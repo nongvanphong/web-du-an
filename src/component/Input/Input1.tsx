@@ -28,7 +28,7 @@ export default function Input1(props: Props) {
         </div>
       )}
       <input
-        type="text"
+        type={props.type}
         className={`border rounded-md w-full h-11 px-5 ${
           props.errorMessage ? "border-red-600" : null
         } ${props.errorMessage ? "bg-pink-100" : null}`}

@@ -1,6 +1,6 @@
 import { ItemAdd } from "../../component/item/ItemAdd";
 import { Item } from "./item";
-import Navigation from "./../../component/navigation/navigation";
+import Navigation from "../../component/navigation/navigation";
 import { useNavigate, useNavigation } from "react-router-dom";
 import path from "../../utils/path/path";
 import { useContext, useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import { Store } from "../../utils/types/store.types";
 import { ErrorResponse } from "../../utils/types/status.typer";
 import test from "../../assets/image/drink.png";
 import ItemStore from "../../component/item/itemStore";
-export const Home = () => {
+export const Home1 = () => {
   const array = [1, 2, 3, 2, 3, 3, 3, 3, 4, 4];
   const navigate = useNavigate();
   const appContext = useContext(AppContext);

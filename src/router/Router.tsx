@@ -15,7 +15,7 @@ import Drink from "../pages/store/drink/drink";
 import Food from "../pages/store/food/food";
 
 import { MainLayout } from "../layout/mainLayout";
-import { AppMainLayout } from "../layout/appMainLayout";
+
 import Test from "../component/test/Test";
 import listDrink from "./../pages/store/drink/listDrink";
 import ListDrink from "./../pages/store/drink/listDrink";
@@ -25,6 +25,8 @@ import Notfail from "../pages/premission/notfail";
 import { Layout } from "../../src/layout/index";
 import { Login } from "../pages/auth/Login/index";
 import { Resgister } from "../pages/auth/Register/index";
+import { Home } from "../pages/home";
+import { Product } from "../pages/product/indext";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
@@ -64,7 +66,30 @@ export default function useRouteElements() {
             </Layout.LayoutAuth>
           ),
         },
-
+        {
+          path: path.home,
+          element: (
+            <Layout.LayoutMain taitle="Đơn hàng" classname="bg-white ">
+              <Home.Home1 />
+            </Layout.LayoutMain>
+          ),
+        },
+        {
+          path: path.product,
+          element: (
+            <Layout.LayoutMain taitle="Sản phẩm" classname="bg-white ">
+              <Product.Product1 />
+            </Layout.LayoutMain>
+          ),
+        },
+        {
+          path: path.AddProduct,
+          element: (
+            <Layout.LayoutMain taitle="Sản phẩm/ Thêm">
+              <Product.AddProduct />
+            </Layout.LayoutMain>
+          ),
+        },
         {
           path: path.store,
           element: (

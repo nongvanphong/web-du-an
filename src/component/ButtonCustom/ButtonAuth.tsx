@@ -6,6 +6,7 @@ interface Typedata {
   bg_color: string;
   text_color: string;
   keys: string;
+  handlClick?: () => void;
 }
 export default function ButtonAuth(props: Typedata) {
   const navigate = useNavigate();
@@ -16,6 +17,11 @@ export default function ButtonAuth(props: Typedata) {
         break;
       case "LOGINPHONE":
         navigate(path.loginPhoneNumber);
+        break;
+      case "LOGINM":
+        if (props.handlClick) {
+          props.handlClick();
+        }
         break;
     }
   };

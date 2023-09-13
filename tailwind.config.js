@@ -20,6 +20,8 @@ module.exports = withMT({
         "green-80-ct": "#7CF900",
         "yellow-80-ct": "#F9EF00",
         "red-80-ct": "#FF3D00",
+        "blue-ct": "#4B68FF",
+        "main-ct": "#F1F3F5",
       },
       padding: {
         "ct-50": "3.125rem",

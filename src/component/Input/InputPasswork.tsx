@@ -5,7 +5,7 @@ interface Props {
   placeholder?: string;
   //img?: string
   name: string;
-  setValue?: React.Dispatch<React.SetStateAction<string>>;
+  // setValue?: React.Dispatch<React.SetStateAction<string>>;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   value?: string;
   maxLength?: number;

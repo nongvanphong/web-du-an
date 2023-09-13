@@ -2,12 +2,35 @@ import { useNavigate } from "react-router-dom";
 import { ButtonCustom } from "../../../../component/ButtonCustom";
 import path from "../../../../utils/path/path";
 import { Input } from "../../../../component/Input";
+import { useFormik } from "formik";
+import { validationSchema } from "../../../../utils/rule/rule_Login";
+import { valiLoginEmail } from "../../../../utils/rule/rule_LoginEmail";
 
 export default function LoginEmail() {
   const navigate = useNavigate();
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: valiLoginEmail, // Sử dụng validationSchema ở đây
+    onSubmit: (values) => {
+      const data = {
+        phone: values.email,
+        password: values.password,
+      };
+
+      console.log("====>", data);
+    },
+  });
+  const handlClickLogin = () => {
+    formik.handleSubmit();
+    navigate(path.home);
+  };
+
   return (
     <div className="w-[31.25rem] flex flex-col gap-10">
-      {/* <h3 className="text-3xl font-bold">Đăng nhập</h3>
+      <h3 className="text-3xl font-bold">Đăng nhập</h3>
       <ButtonCustom.ButtonAuth
         bg_color=" bg-white "
         taitle="Đăng nhập với số điện thoại"
@@ -19,13 +42,64 @@ export default function LoginEmail() {
         Email
         <div className="w-full h-[2px] bg-black" />
       </div>
-      <Input.Input1 />
-      <Input.InputPasswork />
+
+      <div>
+        <ul className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+          {formik.errors.email && (
+            <li className="flex items-center text-red-600">
+              <svg
+                className="w-3.5 h-3.5 mr-2 text-red-600 dark:text-green-400 flex-shrink-0"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+              </svg>
+              {formik.errors.email}
+            </li>
+          )}
+          {formik.errors.password && (
+            <li className="flex items-center text-red-600">
+              <svg
+                className="w-3.5 h-3.5 mr-2 text-red-600 dark:text-green-400 flex-shrink-0"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+              </svg>
+              {formik.errors.password}
+            </li>
+          )}
+        </ul>
+      </div>
+
+      <form className="flex flex-col gap-3" onSubmit={formik.handleSubmit}>
+        <Input.Input1
+          name="email"
+          type="text"
+          maxLength={10}
+          lable="Email"
+          onChange={formik.handleChange}
+          errorMessage={formik.errors.email}
+        />
+        <Input.InputPasswork
+          name="password"
+          type="password"
+          maxLength={10}
+          lable="Password"
+          onChange={formik.handleChange}
+          errorMessage={formik.errors.password}
+        />
+      </form>
       <ButtonCustom.ButtonAuth
         taitle="Đăng nhập"
         bg_color="bg-black"
         text_color="text-white"
-        keys="NULL"
+        keys="LOGINM"
+        handlClick={handlClickLogin}
       />
       <div className="text-center">
         Nếu bạn chưa có tài khoản?
@@ -35,7 +109,7 @@ export default function LoginEmail() {
         >
           <u className="">Đăng kí</u>
         </span>
-      </div> */}
+      </div>
     </div>
   );
 }
