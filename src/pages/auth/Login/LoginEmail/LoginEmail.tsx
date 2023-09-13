@@ -5,9 +5,80 @@ import { Input } from "../../../../component/Input";
 import { useFormik } from "formik";
 import { validationSchema } from "../../../../utils/rule/rule_Login";
 import { valiLoginEmail } from "../../../../utils/rule/rule_LoginEmail";
+import { useContext } from "react";
+import { AppContext } from "../../../../App";
+import { useMutation, useQueryClient } from "react-query";
+import { authFetch } from "../../../../fetchs/auth/authFetch";
+import { Modal } from "../../../../utils/types/modal.types";
 
 export default function LoginEmail() {
   const navigate = useNavigate();
+  const { setIsShowMoadalOtp, setIsShowMoadal1 } = useContext(AppContext);
+  const queryClient = useQueryClient();
+
+  const loginMutation = useMutation(authFetch.login, {
+    onSuccess: (data) => {
+      // if (data.data.info.status == 1) {
+      //   setIsShowMoadal1((p: Modal) => ({
+      //     ...p,
+      //     isHidden: true,
+      //     taile: "Tài khoản của bạn chưa được xác minh!",
+      //   }));
+      //   return;
+      // }
+
+      localStorage.setItem("aT", data.data.accessToken);
+      localStorage.setItem("rf", data.data.refresh_token);
+      localStorage.setItem("if", JSON.stringify(data.data.info));
+      // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
+      // Làm mới dữ liệu sau khi đăng nhập thành công
+      queryClient.invalidateQueries("data");
+      window.location.href = path.home;
+    },
+    onError: (error: any) => {
+      if (error.response.status === 403) {
+        switch (error.response.data.msg) {
+          case "verify Otp!":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn chưa được xác minh!",
+              tailebnt2: "Tiếp tục xác minh",
+              showBotton: 2,
+              type: "VERIFY_OTP",
+            }));
+            return;
+
+          case "lock account!":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn đã bị khóa",
+              tailebnt1: "Đóng",
+              showBotton: 1,
+            }));
+            return;
+
+          case "Wait for admin to verify":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn đang đợi admin xét duyệt",
+              tailebnt1: "Đóng",
+              showBotton: 1,
+            }));
+            return;
+        }
+      }
+      setIsShowMoadal1((p: Modal) => ({
+        ...p,
+        isHidden: true,
+        taile: "Tài khoản hoặc mật khẩu không chính xác!",
+        tailebnt1: "Đóng",
+        showBotton: 1,
+      }));
+    },
+  });
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -16,16 +87,17 @@ export default function LoginEmail() {
     validationSchema: valiLoginEmail, // Sử dụng validationSchema ở đây
     onSubmit: (values) => {
       const data = {
-        phone: values.email,
+        email: values.email,
         password: values.password,
       };
 
-      console.log("====>", data);
+      loginMutation.mutate(data);
     },
   });
+
   const handlClickLogin = () => {
     formik.handleSubmit();
-    navigate(path.home);
+    //  navigate(path.home);
   };
 
   return (
@@ -80,7 +152,7 @@ export default function LoginEmail() {
         <Input.Input1
           name="email"
           type="text"
-          maxLength={10}
+          maxLength={50}
           lable="Email"
           onChange={formik.handleChange}
           errorMessage={formik.errors.email}

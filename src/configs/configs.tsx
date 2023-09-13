@@ -1,4 +1,4 @@
-const HOST = "192.168.1.107";
+const HOST = "192.168.1.2";
 
 const PORT = 1234;
 

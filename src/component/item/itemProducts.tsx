@@ -75,16 +75,16 @@ export default function ItemProducts(props: dataProduct) {
       </td>
       <td className="py-3 px-6 text-center">
         <div className="flex flex-col items-center justify-center">
-          {props.product.Sizes.map((i: Sizes) => (
+          {/* {props.product.Sizes.map((i: Sizes) => (
             <div className="font-bold">{i.pr_price}</div>
-          ))}
+          ))} */}
         </div>
       </td>
       <td className="py-3 px-6 text-center">
         <div className="flex flex-col items-center justify-center">
-          {props.product.Sizes.map((i: Sizes) => (
+          {/* {props.product.Sizes.map((i: Sizes) => (
             <div className="font-bold">{i.pr_size}</div>
-          ))}
+          ))} */}
         </div>
       </td>
       <td className="py-3 px-6 text-center">

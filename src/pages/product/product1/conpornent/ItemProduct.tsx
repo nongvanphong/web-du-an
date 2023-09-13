@@ -6,22 +6,30 @@ import { useMutation } from "react-query";
 import { ProductFetch } from "../../../../fetchs/product.fetch";
 import { Sizes } from "../../../../utils/types/size.typer";
 
-import AddProduct from "./../../Addproduct/AddProduct";
+import AddProduct from "../../Addproduct/AddProduct";
 import path from "../../../../utils/path/path";
 
 type dataProduct = {
   index: number;
   product: Product;
+  hanldeDelete?: (id: number) => void;
 };
 
-export default function Item(props: dataProduct) {
+export default function ItemProduct(props: dataProduct) {
   const navigate = useNavigate();
+
   const [user, setUser] = useState<User>();
+  const [options, setSetOptions] = useState<Sizes[]>();
   const [acction, setAcction] = useState<number>(props.product.status);
   useEffect(() => {
     const userText = localStorage.getItem("if");
     if (!userText) return;
     setUser(JSON.parse(userText));
+  }, []);
+  useEffect(() => {
+    if (!props.product.options) return;
+    // console.log(JSON.parse(props.product.options));
+    setSetOptions(JSON.parse(props.product.options));
   }, []);
   const loginMutation = useMutation(ProductFetch.Acction, {
     onSuccess: (data) => {
@@ -53,7 +61,10 @@ export default function Item(props: dataProduct) {
   const hanldeEdit = () => {
     navigate(path.AddProduct, { state: { test: "1" } });
   };
-
+  const hanldeDelete = () => {
+    if (!props.hanldeDelete) return;
+    props.hanldeDelete(props.product.id);
+  };
   return (
     <tr className="border-b border-gray-200 hover:bg-yellow-50">
       <td className="py-3 px-6 text-left whitespace-nowrap">
@@ -78,17 +89,17 @@ export default function Item(props: dataProduct) {
       </td>
       <td className="py-3 px-6 text-center">
         <div className="flex flex-col items-center justify-center">
-          {props.product.Sizes.map((i: Sizes) => (
-            <div className="font-bold">{i.pr_price}</div>
-          ))}
+          {options &&
+            options.map((i: Sizes) => (
+              <div className="font-bold">{i.pr_price}</div>
+            ))}
         </div>
       </td>
       <td className="py-3 px-6 text-center">
-        <div className="flex flex-col items-center justify-center">
-          {props.product.Sizes.map((i: Sizes) => (
+        {options &&
+          options.map((i: Sizes) => (
             <div className="font-bold">{i.pr_size}</div>
           ))}
-        </div>
       </td>
       <td className="py-3 px-6 text-center">
         <span
@@ -122,7 +133,10 @@ export default function Item(props: dataProduct) {
               />
             </svg>
           </div>
-          <div className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
+          <div
+            className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110"
+            onClick={hanldeDelete}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
