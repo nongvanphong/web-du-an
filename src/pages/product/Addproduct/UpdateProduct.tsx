@@ -3,7 +3,7 @@ import { Input } from "../../../component/Input";
 import { valiLoginEmail } from "../../../utils/rule/rule_LoginEmail";
 import ItemAddOption from "../../../component/item/itemAddOption";
 import { Item } from "./compornent/Item";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import path from "../../../utils/path/path";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -15,19 +15,27 @@ import { CategreyFetch } from "../../../fetchs/categrey.fechs";
 import { Categrey } from "../../../utils/types/categrey.types";
 import { AppContext } from "../../../App";
 import { Modal } from "../../../utils/types/modal.types";
+import { Product } from "../../../utils/types/product.types";
+import { Sizes } from "../../../utils/types/size.typer";
+import { User } from "../../../utils/types/user.types";
 import { ProductFetch } from "../../../fetchs/product.fetch";
 type optionData = {
   size: string;
   price: number;
 };
-export default function AddProduct() {
+export default function UpdateProduct() {
   const { setIsShowMoadalOtp, setIsShowMoadal1 } = useContext(AppContext);
   const navigate = useNavigate();
+  const { state } = useLocation();
+
+  const product = state.product as Product;
+  const [user, setUser] = useState<User>();
   const [fileAccept, setFileAccept] = useState<File>();
   const [file, setFile] = useState("");
   const [itemTest, setItemTest] = useState<optionData[]>([]);
-  const [selectedValue, setSelectedValue] = useState("");
-  const loginMutation = useMutation(ProductFetch.Create, {
+  const [selectedValue, setSelectedValue] = useState(`${product.Categrey?.id}`);
+
+  const loginMutationUpdate1 = useMutation(ProductFetch.Upadte1, {
     onSuccess: (data) => {
       // if (data.data.info.status == 1) {
       //   setIsShowMoadal1((p: Modal) => ({
@@ -40,7 +48,7 @@ export default function AddProduct() {
       setIsShowMoadal1((p: Modal) => ({
         ...p,
         isHidden: true,
-        taile: "Thành công!",
+        taile: "Cập nhập thành công!",
         tailebnt1: "Đóng",
         showBotton: 1,
         type: "",
@@ -56,17 +64,69 @@ export default function AddProduct() {
       setIsShowMoadal1((p: Modal) => ({
         ...p,
         isHidden: true,
-        taile: "Thất bại!",
+        taile: "Cập nhập thất bại!",
         tailebnt1: "Đóng",
         showBotton: 1,
         type: "",
       }));
     },
   });
+  const loginMutationUpdate2 = useMutation(ProductFetch.Upadte2, {
+    onSuccess: (data) => {
+      // if (data.data.info.status == 1) {
+      //   setIsShowMoadal1((p: Modal) => ({
+      //     ...p,
+      //     isHidden: true,
+      //     taile: "Tài khoản của bạn chưa được xác minh!",
+      //   }));
+      //   return;
+      // }
+      setIsShowMoadal1((p: Modal) => ({
+        ...p,
+        isHidden: true,
+        taile: "Cập nhập thành công!",
+        tailebnt1: "Đóng",
+        showBotton: 1,
+        type: "",
+      }));
+
+      setFile("");
+      setFileAccept(undefined);
+      setSelectedValue("");
+      formik1.resetForm();
+    },
+    onError: (error: any) => {
+      console.log(error);
+      setIsShowMoadal1((p: Modal) => ({
+        ...p,
+        isHidden: true,
+        taile: "Cập nhập thất bại!",
+        tailebnt1: "Đóng",
+        showBotton: 1,
+        type: "",
+      }));
+    },
+  });
+
+  useEffect(() => {
+    if (!product.options) return;
+    setItemTest(JSON.parse(product.options));
+  }, []);
+  useEffect(() => {
+    if (!product.image_product) return;
+    const userText = localStorage.getItem("if");
+    if (!userText) return;
+    // setUser(JSON.parse(userText));
+
+    const a: User = JSON.parse(userText);
+    setFile(
+      `http://localhost:1234/store/${a.id}/product/${product.image_product}`
+    );
+  }, []);
   const formik1 = useFormik({
     initialValues: {
-      name_product: "",
-      detail: "",
+      name_product: state && product.name_product ? product.name_product : "",
+      detail: state && product.detail ? product.detail : "",
     },
     validationSchema: vl1, // Sử dụng validationSchema ở đây
     onSubmit: (values) => {
@@ -92,7 +152,8 @@ export default function AddProduct() {
         }));
         return;
       }
-      if (!fileAccept) {
+
+      if (!fileAccept && !file) {
         setIsShowMoadal1((p: Modal) => ({
           ...p,
           isHidden: true,
@@ -115,14 +176,29 @@ export default function AddProduct() {
         size = `${size},"${i.size}"`;
       });
 
-      const formDataToSend = new FormData();
-      formDataToSend.append("file", fileAccept);
-      formDataToSend.append("size", `[${size}]`);
-      formDataToSend.append("price", `[${price}]`);
-      formDataToSend.append("detail", values.detail);
-      formDataToSend.append("name_product", values.name_product);
-      formDataToSend.append("cg_id", selectedValue);
-      loginMutation.mutate(formDataToSend);
+      if (fileAccept) {
+        const formDataToSend = new FormData();
+        formDataToSend.append("id", `${product.id}`);
+        formDataToSend.append("file", fileAccept);
+        formDataToSend.append("size", `[${size}]`);
+        formDataToSend.append("price", `[${price}]`);
+        formDataToSend.append("detail", values.detail);
+        formDataToSend.append("name_product", values.name_product);
+        formDataToSend.append("cg_id", selectedValue);
+        loginMutationUpdate2.mutate(formDataToSend);
+        return;
+      }
+      console.log(product.cg_id, "---->", selectedValue);
+      const updateData = {
+        id: product.id,
+
+        size: `[${size}]`,
+        price: `[${price}]`,
+        detail: values.detail,
+        name_product: values.name_product,
+        cg_id: selectedValue,
+      };
+      loginMutationUpdate1.mutate(updateData);
     },
   });
   const formik2 = useFormik({
@@ -263,7 +339,7 @@ export default function AddProduct() {
             />
           </form>
           {itemTest.length > 0 && (
-            <div className="bg-white w-1/3  rounded-md flex flex-col gap-3 py-5">
+            <div className="bg-white w-1/2  rounded-md flex flex-col gap-3 py-5">
               {itemTest.map((i, index) => (
                 <Item.ItemSizePrice
                   index={index}
@@ -342,10 +418,15 @@ export default function AddProduct() {
                 value={selectedValue} // Đặt giá trị được chọn từ trạng thái của bạn
                 onChange={(e) => setSelectedValue(e.target.value)} // Xử lý sự kiện khi người dùng thay đổi giá trị
               >
+                <option selected value={product.Categrey?.id}>
+                  {product.Categrey?.cg_name}
+                </option>
                 {!isLoading &&
-                  data.data.map((item: Categrey, index: number) => (
-                    <option value={item.id}>{item.cg_name}</option>
-                  ))}
+                  data.data.map((item: Categrey, index: number) => {
+                    if (item.id != product.Categrey?.id) {
+                      return <option value={item.id}>{item.cg_name}</option>;
+                    }
+                  })}
               </select>
             </div>
           </div>

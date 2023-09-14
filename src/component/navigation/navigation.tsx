@@ -57,6 +57,46 @@ export default function Navigation() {
         />
         <span className="pl-3">Sản phẩm</span>
       </div>
+      <div
+        className={`w-full h-10 ${
+          location.pathname == path.pay ? `bg-blue-ct` : null
+        } rounded-full flex pl-5 items-center cursor-pointer`}
+        onClick={() => navigate(path.pay)}
+      >
+        <img
+          src={location.pathname == path.pay ? iconHome : iconHomeBlack}
+          alt="home"
+          style={{ stroke: "#bbb", fill: "#f665" }}
+          className="w-6 h-6 stroke-slate-500 fill-slate-600 "
+        />
+        <span
+          className={`pl-3 ${
+            location.pathname == path.pay ? `text-white` : `text-black`
+          }`}
+        >
+          Hóa đơn
+        </span>
+      </div>
+      <div
+        className={`w-full h-10 ${
+          location.pathname == path.chart ? `bg-blue-ct` : null
+        } rounded-full flex pl-5 items-center cursor-pointer`}
+        onClick={() => navigate(path.chart)}
+      >
+        <img
+          src={location.pathname == path.chart ? iconHome : iconHomeBlack}
+          alt="home"
+          style={{ stroke: "#bbb", fill: "#f665" }}
+          className="w-6 h-6 stroke-slate-500 fill-slate-600 "
+        />
+        <span
+          className={`pl-3 ${
+            location.pathname == path.chart ? `text-white` : `text-black`
+          }`}
+        >
+          Thống kê
+        </span>
+      </div>
       <div className="w-11 h-11  rounded-full flex justify-center items-center">
         <img src={iconLogout} alt="logout" className="w-6 h-6" />
       </div>

@@ -13,7 +13,6 @@ export const Modal_1 = () => {
   const { setIsShowMoadalOtp, isShowMoadal1, setIsShowMoadal1, type } =
     useContext(AppContext);
   const checkType = (type: string) => {
-    console.log("--->", type);
     switch (type) {
       case "VERIFY_OTP":
         setIsShowMoadalOtp(true);

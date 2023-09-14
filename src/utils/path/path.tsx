@@ -7,6 +7,9 @@ const path = {
   home: "/elephan/home",
   product: "/elephan/product",
   AddProduct: "/elephan/product/add",
+  updateProduct: "/elephan/product/update",
+  pay: "/elephan/pay",
+  chart: "/elephan/chart",
 
   store: "/elephan/store",
   manager: "/elephan/store/manager",

@@ -17,7 +17,6 @@ export default function Product1() {
     cacheTime: 10000,
   });
   useEffect(() => {
-    console.log(data, isLoading, error);
     if (isLoading) return;
     setFechData(data.data);
   }, [data]);
@@ -27,6 +26,15 @@ export default function Product1() {
       fechData.filter((product: Product) => product.id !== id)
     );
   };
+  // const hanldeUpdate = (id: number, acction: number) => {
+  //   if (!fechData) return;
+  //   setFechData((prevVideoList) =>
+  //     fechData.map((item: Product, index) => ({
+  //       ...item,
+  //       status: item.id == id ? acction : acction,
+  //     }))
+  //   );
+  // };
   return (
     <div className=" w-full ">
       <div className="w-full h-12  flex justify-between items-center">
@@ -40,6 +48,7 @@ export default function Product1() {
           <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
             <th className="py-3 px-6 text-left">#</th>
             <th className="py-3 px-6 text-left">#</th>
+            <th className="py-3 px-6 text-left">Loại</th>
             <th className="py-3 px-6 text-left">Tên</th>
             <th className="py-3 px-6 text-center">Giá</th>
             <th className="py-3 px-6 text-center">Size</th>
@@ -54,6 +63,7 @@ export default function Product1() {
                 index={index}
                 product={item}
                 hanldeDelete={hnaldeDelete}
+                // hanldeUpdate={hanldeUpdate}
               />
             ))}
         </tbody>

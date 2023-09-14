@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Product } from "../../../../utils/types/product.types";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { User } from "../../../../utils/types/user.types";
 import { useMutation } from "react-query";
 import { ProductFetch } from "../../../../fetchs/product.fetch";
@@ -8,19 +8,32 @@ import { Sizes } from "../../../../utils/types/size.typer";
 
 import AddProduct from "../../Addproduct/AddProduct";
 import path from "../../../../utils/path/path";
+import { AppContext } from "../../../../App";
+import { Modal } from "../../../../utils/types/modal.types";
 
 type dataProduct = {
   index: number;
   product: Product;
   hanldeDelete?: (id: number) => void;
+  hanldeUpdate?: (id: number, acction: number) => void;
 };
-
+type dataDelete = {
+  id?: number;
+  check?: boolean;
+  acttion?: number;
+};
 export default function ItemProduct(props: dataProduct) {
   const navigate = useNavigate();
-
+  const { isShowMoadal1, setIsShowMoadal1 } = useContext(AppContext);
   const [user, setUser] = useState<User>();
   const [options, setSetOptions] = useState<Sizes[]>();
   const [acction, setAcction] = useState<number>(props.product.status);
+  const [isCheck, setIsCheck] = useState<dataDelete>({
+    acttion: 0,
+    check: false,
+    id: -1,
+  });
+
   useEffect(() => {
     const userText = localStorage.getItem("if");
     if (!userText) return;
@@ -39,9 +52,34 @@ export default function ItemProduct(props: dataProduct) {
       console.log("thất bại====> ", error);
     },
   });
+  const loginMutationDelete = useMutation(ProductFetch.Delete, {
+    onSuccess: (data) => {
+      // console.log("thành công");
+      if (!props.hanldeDelete) return;
+      console.log(props.product.id);
+      props.hanldeDelete(props.product.id);
+    },
+    onError: (error: any) => {
+      console.log("thất bại====> ", error);
+
+      if (error.response.data.msg) {
+        setIsShowMoadal1((p: Modal) => ({
+          ...p,
+          isHidden: true,
+          taile: `Xóa đang có lỗi. Vui lòng thử lại sau!`,
+          tailebnt1: "Đóng",
+          showBotton: 1,
+        }));
+        return;
+      }
+    },
+  });
+
   const handleAcction = () => {
     if (acction == 0) {
       setAcction(1);
+      // if (!props.hanldeUpdate) return;
+      // props.hanldeUpdate(props.product.id, 1);
       const dataUpdate = {
         id: props.product.id,
         acction: 1,
@@ -51,6 +89,8 @@ export default function ItemProduct(props: dataProduct) {
       return;
     }
     setAcction(0);
+    // if (!props.hanldeUpdate) return;
+    // props.hanldeUpdate(props.product.id, 1);
     const dataUpdate = {
       id: props.product.id,
       acction: 0,
@@ -59,12 +99,39 @@ export default function ItemProduct(props: dataProduct) {
     return;
   };
   const hanldeEdit = () => {
-    navigate(path.AddProduct, { state: { test: "1" } });
+    navigate(path.updateProduct, { state: { product: props.product } });
   };
   const hanldeDelete = () => {
-    if (!props.hanldeDelete) return;
-    props.hanldeDelete(props.product.id);
+    setIsShowMoadal1((p: Modal) => ({
+      ...p,
+      isHidden: true,
+      taile: `Bạn có muốn xóa sản phẩm "${props.product.name_product}" này không?`,
+      tailebnt1: "Đóng",
+      showBotton: 0,
+      tailebnt2: "Xóa",
+      bnt2: false,
+    }));
+    // console.log(props.product.id, "=>", props.product.status);
+    setIsCheck({
+      acttion: props.product.status,
+      check: true,
+      id: props.product.id,
+    });
+
+    // if (!props.hanldeDelete) return;
+    // props.hanldeDelete(props.product.id);
+    // handleAcction();
+    // loginMutationDelete.mutate({ id: props.product.id });
   };
+
+  useEffect(() => {
+    if (isCheck.id != -1 && isCheck.check && isShowMoadal1.bnt2) {
+      setIsCheck({ check: false });
+
+      loginMutationDelete.mutate({ id: props.product.id });
+      return;
+    }
+  }, [isShowMoadal1.bnt2]);
   return (
     <tr className="border-b border-gray-200 hover:bg-yellow-50">
       <td className="py-3 px-6 text-left whitespace-nowrap">
@@ -83,6 +150,15 @@ export default function ItemProduct(props: dataProduct) {
       <td className="py-3 px-6 text-left">
         <div className="flex items-center">
           <div className="mr-2">
+            <span className="font-medium">
+              {props.product.Categrey?.cg_name}
+            </span>
+          </div>
+        </div>
+      </td>
+      <td className="py-3 px-6 text-left">
+        <div className="flex items-center">
+          <div className="mr-2">
             <span className="font-medium">{props.product.name_product}</span>
           </div>
         </div>
@@ -91,19 +167,17 @@ export default function ItemProduct(props: dataProduct) {
         <div className="flex flex-col items-center justify-center">
           {options &&
             options.map((i: Sizes) => (
-              <div className="font-bold">{i.pr_price}</div>
+              <div className="font-bold">{i.price}</div>
             ))}
         </div>
       </td>
       <td className="py-3 px-6 text-center">
         {options &&
-          options.map((i: Sizes) => (
-            <div className="font-bold">{i.pr_size}</div>
-          ))}
+          options.map((i: Sizes) => <div className="font-bold">{i.size}</div>)}
       </td>
       <td className="py-3 px-6 text-center">
         <span
-          className={`  ${
+          className={`${
             acction == 0
               ? "bg-purple-200 text-purple-600"
               : "bg-orange-200 text-orange-600"

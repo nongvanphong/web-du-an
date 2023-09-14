@@ -1,3 +1,4 @@
+import { Categrey } from "./categrey.types";
 export interface Product {
   id: number;
   store_id: number;
@@ -9,6 +10,6 @@ export interface Product {
   file?: File;
   pr_size?: string;
   pr_price?: string;
-
   options?: string;
+  Categrey?: Categrey;
 }

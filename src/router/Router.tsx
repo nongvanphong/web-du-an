@@ -27,6 +27,8 @@ import { Login } from "../pages/auth/Login/index";
 import { Resgister } from "../pages/auth/Register/index";
 import { Home } from "../pages/home";
 import { Product } from "../pages/product/indext";
+import { Pay } from "../pages/Pay";
+import { Chart } from "../pages/Chart";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
@@ -87,6 +89,30 @@ export default function useRouteElements() {
           element: (
             <Layout.LayoutMain taitle="Sản phẩm/ Thêm">
               <Product.AddProduct />
+            </Layout.LayoutMain>
+          ),
+        },
+        {
+          path: path.updateProduct,
+          element: (
+            <Layout.LayoutMain taitle="Sản phẩm/ Cập nhập">
+              <Product.UpdateProduct />
+            </Layout.LayoutMain>
+          ),
+        },
+        {
+          path: path.chart,
+          element: (
+            <Layout.LayoutMain taitle="Thống kê">
+              <Chart.Chart1 />
+            </Layout.LayoutMain>
+          ),
+        },
+        {
+          path: path.pay,
+          element: (
+            <Layout.LayoutMain taitle="Hóa đơn">
+              <Pay.PayScreen />
             </Layout.LayoutMain>
           ),
         },
