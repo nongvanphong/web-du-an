@@ -103,7 +103,7 @@ export default function useRouteElements() {
         {
           path: path.chart,
           element: (
-            <Layout.LayoutMain taitle="Thống kê">
+            <Layout.LayoutMain taitle="Hóa đơn">
               <Chart.Chart1 />
             </Layout.LayoutMain>
           ),
@@ -111,7 +111,7 @@ export default function useRouteElements() {
         {
           path: path.pay,
           element: (
-            <Layout.LayoutMain taitle="Hóa đơn">
+            <Layout.LayoutMain taitle="Thống kê">
               <Pay.PayScreen />
             </Layout.LayoutMain>
           ),

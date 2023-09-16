@@ -7,8 +7,8 @@ export default function PayScreen() {
       <Item.ItemPay />
       <div className="px-5 font-bold text-2xl">Biểu đồ</div>
       <Chart.Chart1 />
-      <div className="px-5 font-bold text-2xl">Hóa đơn</div>
-      <Item.Bill />
+      {/* <div className="px-5 font-bold text-2xl">Hóa đơn</div>
+      <Item.Bill /> */}
     </div>
   );
 }

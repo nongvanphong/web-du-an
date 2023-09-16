@@ -74,7 +74,7 @@ export default function Navigation() {
             location.pathname == path.pay ? `text-white` : `text-black`
           }`}
         >
-          Hóa đơn
+          Thống kê
         </span>
       </div>
       <div
@@ -94,7 +94,7 @@ export default function Navigation() {
             location.pathname == path.chart ? `text-white` : `text-black`
           }`}
         >
-          Thống kê
+          Hóa đơn
         </span>
       </div>
       <div className="w-11 h-11  rounded-full flex justify-center items-center">
