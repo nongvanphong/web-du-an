@@ -29,6 +29,7 @@ import { Home } from "../pages/home";
 import { Product } from "../pages/product/indext";
 import { Pay } from "../pages/Pay";
 import { Chart } from "../pages/Chart";
+import { Bill } from "../pages/bill/Index";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
@@ -104,7 +105,7 @@ export default function useRouteElements() {
           path: path.chart,
           element: (
             <Layout.LayoutMain taitle="Hóa đơn">
-              <Chart.Chart1 />
+              <Bill.BillSceen />
             </Layout.LayoutMain>
           ),
         },

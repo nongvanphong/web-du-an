@@ -1,6 +1,6 @@
 import React from "react";
 import path from "../../../utils/path/path";
-import { Item } from "../../home/item";
+import { Item } from "../../home/compornent/item";
 import { ItemAdd } from "../../../component/item/ItemAdd";
 import { useNavigate } from "react-router-dom";
 import ItemProduct from "../../../component/item/itemProduct";
