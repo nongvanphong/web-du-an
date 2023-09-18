@@ -5,7 +5,7 @@ import { Input } from "../../../../component/Input";
 import { useFormik } from "formik";
 import { validationSchema } from "../../../../utils/rule/rule_Login";
 import { valiLoginEmail } from "../../../../utils/rule/rule_LoginEmail";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../../../../App";
 import { useMutation, useQueryClient } from "react-query";
 import { authFetch } from "../../../../fetchs/auth/authFetch";
@@ -15,6 +15,7 @@ export default function LoginEmail() {
   const navigate = useNavigate();
   const { setIsShowMoadalOtp, setIsShowMoadal1 } = useContext(AppContext);
   const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const loginMutation = useMutation(authFetch.login, {
     onSuccess: (data) => {
@@ -32,10 +33,12 @@ export default function LoginEmail() {
       localStorage.setItem("if", JSON.stringify(data.data.info));
       // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
       // Làm mới dữ liệu sau khi đăng nhập thành công
+      setIsLoading(false);
       queryClient.invalidateQueries("data");
       window.location.href = path.home;
     },
     onError: (error: any) => {
+      setIsLoading(false);
       if (error.response.status === 403) {
         switch (error.response.data.msg) {
           case "verify Otp!":
@@ -90,7 +93,8 @@ export default function LoginEmail() {
         email: values.email,
         password: values.password,
       };
-
+      setIsLoading(true);
+      //  event.preventDefault();
       loginMutation.mutate(data);
     },
   });
@@ -114,7 +118,6 @@ export default function LoginEmail() {
         Email
         <div className="w-full h-[2px] bg-black" />
       </div>
-
       <div>
         <ul className="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
           {formik.errors.email && (
@@ -147,7 +150,6 @@ export default function LoginEmail() {
           )}
         </ul>
       </div>
-
       <form className="flex flex-col gap-3" onSubmit={formik.handleSubmit}>
         <Input.Input1
           name="email"
@@ -172,6 +174,7 @@ export default function LoginEmail() {
         text_color="text-white"
         keys="LOGINM"
         handlClick={handlClickLogin}
+        isLoading={isLoading}
       />
       <div className="text-center">
         Nếu bạn chưa có tài khoản?

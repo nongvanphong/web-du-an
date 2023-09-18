@@ -30,20 +30,82 @@ import { Product } from "../pages/product/indext";
 import { Pay } from "../pages/Pay";
 import { Chart } from "../pages/Chart";
 import { Bill } from "../pages/bill/Index";
+import ServerError from "../pages/premission/ServerError";
+import { useEffect, useState } from "react";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
+  const [tokenExists, setTokenExists] = useState(0); // 0 là chưa đăng nhaaowj 1 là đăng nhập
+  useEffect(() => {
+    // Kiểm tra token trong localStorage
+    const token = localStorage.getItem("rf");
+    if (token) {
+      return setTokenExists(1);
+    }
+    return setTokenExists(0);
+  }, []);
+  const CheckPremissions = (type: string) => {
+    if (tokenExists) {
+      // đẵ daawnh nhặp
+      return checkType(type);
+    } else {
+      // chưa đăng nhặp
+      return (
+        <Layout.LayoutAuth>
+          <Login.Login2 />
+        </Layout.LayoutAuth>
+      );
+    }
+  };
+
+  const checkType = (type: string): any => {
+    switch (type) {
+      case "home":
+        return (
+          <Layout.LayoutMain taitle="Đơn hàng" classname="bg-white ">
+            <Home.Home1 />
+          </Layout.LayoutMain>
+        );
+      case "product":
+        return (
+          <Layout.LayoutMain taitle="Sản phẩm" classname="bg-white ">
+            <Product.Product1 />
+          </Layout.LayoutMain>
+        );
+      case "update_product":
+        return (
+          <Layout.LayoutMain taitle="Sản phẩm/ Cập nhập">
+            <Product.UpdateProduct />
+          </Layout.LayoutMain>
+        );
+      case "create_product":
+        return (
+          <Layout.LayoutMain taitle="Sản phẩm/ Thêm">
+            <Product.AddProduct />
+          </Layout.LayoutMain>
+        );
+      case "bill":
+        return (
+          <Layout.LayoutMain taitle="Hóa đơn">
+            <Bill.BillSceen />
+          </Layout.LayoutMain>
+        );
+      case "pay":
+        return (
+          <Layout.LayoutMain taitle="Thống kê">
+            <Pay.PayScreen />
+          </Layout.LayoutMain>
+        );
+    }
+  };
+
   const routes = useRoutes([
     {
       path: "",
       children: [
         {
           path: path.login,
-          element: (
-            <Layout.LayoutAuth>
-              <Login.Login2 />
-            </Layout.LayoutAuth>
-          ),
+          element: CheckPremissions("home"),
         },
         {
           path: path.loginEmail,
@@ -71,93 +133,28 @@ export default function useRouteElements() {
         },
         {
           path: path.home,
-          element: (
-            <Layout.LayoutMain taitle="Đơn hàng" classname="bg-white ">
-              <Home.Home1 />
-            </Layout.LayoutMain>
-          ),
+          element: CheckPremissions("home"),
         },
         {
           path: path.product,
-          element: (
-            <Layout.LayoutMain taitle="Sản phẩm" classname="bg-white ">
-              <Product.Product1 />
-            </Layout.LayoutMain>
-          ),
+          element: CheckPremissions("product"),
         },
         {
           path: path.AddProduct,
-          element: (
-            <Layout.LayoutMain taitle="Sản phẩm/ Thêm">
-              <Product.AddProduct />
-            </Layout.LayoutMain>
-          ),
+          element: CheckPremissions("create_product"),
         },
         {
           path: path.updateProduct,
-          element: (
-            <Layout.LayoutMain taitle="Sản phẩm/ Cập nhập">
-              <Product.UpdateProduct />
-            </Layout.LayoutMain>
-          ),
+          element: CheckPremissions("update_product"),
         },
         {
           path: path.chart,
-          element: (
-            <Layout.LayoutMain taitle="Hóa đơn">
-              <Bill.BillSceen />
-            </Layout.LayoutMain>
-          ),
+          element: CheckPremissions("bill"),
         },
         {
           path: path.pay,
-          element: (
-            <Layout.LayoutMain taitle="Thống kê">
-              <Pay.PayScreen />
-            </Layout.LayoutMain>
-          ),
+          element: CheckPremissions("pay"),
         },
-        {
-          path: path.store,
-          element: (
-            <MainLayout>
-              <Store></Store>
-            </MainLayout>
-          ),
-        },
-        {
-          path: path.manager,
-          element: (
-            <MainLayout>
-              <Manager />
-            </MainLayout>
-          ),
-        },
-        {
-          path: path.managerDrink,
-          element: (
-            <MainLayout>
-              <Drink />
-            </MainLayout>
-          ),
-        },
-        {
-          path: path.managerListDrink,
-          element: (
-            <MainLayout>
-              <ListDrink />
-            </MainLayout>
-          ),
-        },
-        {
-          path: path.managerfood,
-          element: (
-            <MainLayout>
-              <Food />
-            </MainLayout>
-          ),
-        },
-
         {
           path: path.premissions,
           element: <Premissions />,
@@ -165,6 +162,10 @@ export default function useRouteElements() {
         {
           path: path.notfial,
           element: <Notfail />,
+        },
+        {
+          path: path.serverError,
+          element: <ServerError />,
         },
         {
           path: "t",

@@ -10,6 +10,7 @@ import { Modal_1 } from "./component/modal/modal_1";
 import { Modal } from "./utils/types/modal.types";
 import { boolean } from "yup";
 import ModalOtp from "./component/modal/modalOtp";
+import path from "./utils/path/path";
 
 export const AppContext = createContext<any>(null);
 

@@ -19,6 +19,7 @@ const path = {
   registerSrore: "/elephan/store/register",
   premissions: "/elephan/error/403",
   notfial: "/elephan/error/404",
+  serverError: "/elephan/error/500",
 } as const;
 
 export default path;

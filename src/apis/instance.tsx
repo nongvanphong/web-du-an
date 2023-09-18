@@ -35,6 +35,15 @@ instance.interceptors.response.use(
     return response;
   },
   (error) => {
+    if (!localStorage.getItem("rf")) {
+      window.location.href = path.login;
+      return;
+    }
+
+    if (error.code === "ERR_NETWORK") {
+      window.location.href = path.serverError;
+      return;
+    }
     if (
       error.response.status === 400 &&
       error.response.msg === "User does not exist!"

@@ -4,10 +4,82 @@ import { ButtonCustom } from "../../../../component/ButtonCustom";
 import path from "../../../../utils/path/path";
 import { useFormik } from "formik";
 import { validationSchema } from "../../../../utils/rule/rule_Login";
-import { error } from "console";
+import { useContext, useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import { authFetch } from "../../../../fetchs/auth/authFetch";
+import { AppContext } from "../../../../App";
+import { Modal } from "../../../../utils/types/modal.types";
 
 export default function LoginPhone() {
   const navigate = useNavigate();
+  const { setIsShowMoadalOtp, setIsShowMoadal1 } = useContext(AppContext);
+  const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const loginMutation = useMutation(authFetch.login, {
+    onSuccess: (data) => {
+      // if (data.data.info.status == 1) {
+      //   setIsShowMoadal1((p: Modal) => ({
+      //     ...p,
+      //     isHidden: true,
+      //     taile: "Tài khoản của bạn chưa được xác minh!",
+      //   }));
+      //   return;
+      // }
+
+      localStorage.setItem("aT", data.data.accessToken);
+      localStorage.setItem("rf", data.data.refresh_token);
+      localStorage.setItem("if", JSON.stringify(data.data.info));
+      // Xử lý kết quả ở đây, ví dụ lưu thông tin đăng nhập vào trạng thái hoặc local storage
+      // Làm mới dữ liệu sau khi đăng nhập thành công
+      setIsLoading(false);
+      queryClient.invalidateQueries("data");
+      window.location.href = path.home;
+    },
+    onError: (error: any) => {
+      setIsLoading(false);
+      if (error.response.status === 403) {
+        switch (error.response.data.msg) {
+          case "verify Otp!":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn chưa được xác minh!",
+              tailebnt2: "Tiếp tục xác minh",
+              showBotton: 2,
+              type: "VERIFY_OTP",
+            }));
+            return;
+
+          case "lock account!":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn đã bị khóa",
+              tailebnt1: "Đóng",
+              showBotton: 1,
+            }));
+            return;
+
+          case "Wait for admin to verify":
+            setIsShowMoadal1((p: Modal) => ({
+              ...p,
+              isHidden: true,
+              taile: "Tài khoản của bạn đang đợi admin xét duyệt",
+              tailebnt1: "Đóng",
+              showBotton: 1,
+            }));
+            return;
+        }
+      }
+      setIsShowMoadal1((p: Modal) => ({
+        ...p,
+        isHidden: true,
+        taile: "Tài khoản hoặc mật khẩu không chính xác!",
+        tailebnt1: "Đóng",
+        showBotton: 1,
+      }));
+    },
+  });
   const formik = useFormik({
     initialValues: {
       phone: "",
@@ -19,14 +91,20 @@ export default function LoginPhone() {
       //  console.log("===>", values);
       //event.preventDefault();
       const data = {
-        email: "",
         phone: values.phone,
         password: values.password,
       };
 
-      console.log("====>", data);
+      setIsLoading(true);
+      //  event.preventDefault();
+      loginMutation.mutate(data);
     },
   });
+  const handlClickLogin = () => {
+    console.log("jhg");
+    formik.handleSubmit();
+    //  navigate(path.home);
+  };
   return (
     <div className="w-[31.25rem] flex flex-col gap-10">
       <h3 className="text-3xl font-bold">Đăng nhập</h3>
@@ -97,7 +175,9 @@ export default function LoginPhone() {
         taitle="Đăng nhập"
         bg_color="bg-black"
         text_color="text-white"
-        keys="NULL"
+        keys="CLICK"
+        isLoading={isLoading}
+        handlClick={handlClickLogin}
       />
       <div className="text-center">
         Nếu bạn chưa có tài khoản?

@@ -13,7 +13,7 @@ export const Layout = ({ children }: Props) => {
             className="h-full w-full object-cover"
           />
         </div>
-        <div className="w-full h-full bg-gray-ct p-5">{children}</div>
+        <div className="w-full h-full bg-gray-ct p-5 ">{children}</div>
       </div>
     </div>
   );

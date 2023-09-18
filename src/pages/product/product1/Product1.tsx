@@ -6,6 +6,7 @@ import { ProductFetch } from "../../../fetchs/product.fetch";
 import { Product } from "../../../utils/types/product.types";
 import { Item } from "./conpornent";
 import { useEffect, useState } from "react";
+import NextPage from "../../../component/Nextpage/NextPage";
 
 export default function Product1() {
   const [fechData, setFechData] = useState<Product[]>();
@@ -68,6 +69,7 @@ export default function Product1() {
             ))}
         </tbody>
       </table>
+      <NextPage />
     </div>
   );
 }

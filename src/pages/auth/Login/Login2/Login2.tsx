@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
+
 import { ButtonCustom } from "../../../../component/ButtonCustom";
 import path from "../../../../utils/path/path";
+import { useEffect } from "react";
 
 export default function Login2() {
   const navigate = useNavigate();
+
   return (
     <div className="w-[31.25rem] flex flex-col gap-10">
       <h3 className="text-3xl font-bold">Đăng nhập vào ứng dụng</h3>
