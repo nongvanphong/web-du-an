@@ -17,7 +17,7 @@ export default function Navigation() {
   return (
     <div className="w-full h-full p-3 bg-white flex flex-col gap-5 py-5 items-center">
       <div
-        className={`w-full h-10 ${
+        className={`w-full relative h-10 ${
           location.pathname == path.home ? `bg-blue-ct` : null
         } rounded-full flex pl-5 items-center cursor-pointer`}
         onClick={() => navigate(path.home)}
@@ -35,6 +35,9 @@ export default function Navigation() {
         >
           Đơn hàng
         </span>
+        <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2 dark:border-gray-900">
+          1
+        </div>
       </div>
       <div
         className={`w-full h-10 ${

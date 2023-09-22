@@ -2,26 +2,15 @@ import {
   Navigate,
   Outlet,
   Route,
+  useLocation,
   useNavigate,
   useRoutes,
 } from "react-router-dom";
 
 import path from "../utils/path/path";
-
-import { Store } from "../pages/store/store/store";
-
-import Manager from "../pages/store/manager/manager";
-import Drink from "../pages/store/drink/drink";
-import Food from "../pages/store/food/food";
-
-import { MainLayout } from "../layout/mainLayout";
-
 import Test from "../component/test/Test";
-import listDrink from "./../pages/store/drink/listDrink";
-import ListDrink from "./../pages/store/drink/listDrink";
 import { Premissions } from "../pages/premission/premissions";
 import Notfail from "../pages/premission/notfail";
-
 import { Layout } from "../../src/layout/index";
 import { Login } from "../pages/auth/Login/index";
 import { Resgister } from "../pages/auth/Register/index";
@@ -35,7 +24,23 @@ import { useEffect, useState } from "react";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [tokenExists, setTokenExists] = useState(0); // 0 là chưa đăng nhaaowj 1 là đăng nhập
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case path.login:
+      case path.loginEmail:
+      case path.loginPhoneNumber:
+      case path.register:
+      case path.notfial:
+      case path.premissions:
+      case path.serverError:
+        break;
+      default:
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     // Kiểm tra token trong localStorage
     const token = localStorage.getItem("rf");

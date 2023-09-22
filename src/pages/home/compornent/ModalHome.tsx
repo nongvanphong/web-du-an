@@ -10,15 +10,28 @@ import {
   Typography,
   Card,
 } from "@material-tailwind/react";
+import { BillDetail } from "../../../utils/types/billdetail.types";
+
+type modalhome = {
+  id: number;
+  user_id?: number;
+  img?: string;
+  phone?: string;
+  address?: string;
+  user_name?: string;
+  detail?: BillDetail;
+};
 
 type Types = {
   isOpen: boolean;
   hanldeClode: () => void;
+  modalhome?: modalhome;
 };
-const array = [1, 2, 3, 2, 3, 3, 3, 3, 4, 4, 2, 3, 2, 3, 3];
+const array = [1, 2, 3, 2, 3, 3, 3];
 export function ModalHome(props: Types) {
   const [open, setOpen] = React.useState(props.isOpen);
   const [isFavorite, setIsFavorite] = React.useState(false);
+
   React.useEffect(() => {
     setOpen(props.isOpen);
   }, [props.isOpen]);
@@ -56,14 +69,21 @@ export function ModalHome(props: Types) {
                 color="blue-gray"
                 className="font-medium"
               >
-                Nguyễn văn a
+                {props.modalhome?.user_name}
               </Typography>
               <Typography
                 variant="small"
                 color="gray"
                 className="text-xs font-normal"
               >
-                0394782222
+                {props.modalhome?.phone}
+              </Typography>
+              <Typography
+                variant="small"
+                color="gray"
+                className="text-xs font-normal"
+              >
+                {props.modalhome?.address}
               </Typography>
             </div>
           </div>

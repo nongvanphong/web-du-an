@@ -6,4 +6,5 @@ export interface User {
   permission?: number | string;
   status?: number | string;
   image?: string;
+  address?: string;
 }
