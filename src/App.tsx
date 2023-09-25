@@ -15,7 +15,6 @@ import path from "./utils/path/path";
 export const AppContext = createContext<any>(null);
 
 function App() {
-  console.log("abc");
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
