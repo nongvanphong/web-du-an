@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 
 import path from "../utils/path/path";
-
 import { Store } from "../pages/store/store/store";
 
 import Manager from "../pages/store/manager/manager";
@@ -35,7 +34,7 @@ import { useEffect, useState } from "react";
 
 export default function useRouteElements() {
   const navigate = useNavigate();
-  const [tokenExists, setTokenExists] = useState(0); // 0 là chưa đăng nhaaowj 1 là đăng nhập
+  const [tokenExists, setTokenExists] = useState(0); // 0 là chưa đăng nhập 1 là đăng nhập
   useEffect(() => {
     // Kiểm tra token trong localStorage
     const token = localStorage.getItem("rf");
@@ -46,7 +45,7 @@ export default function useRouteElements() {
   }, []);
   const CheckPremissions = (type: string) => {
     if (tokenExists) {
-      // đẵ daawnh nhặp
+      // Đã đăng nhập
       return checkType(type);
     } else {
       // chưa đăng nhặp
