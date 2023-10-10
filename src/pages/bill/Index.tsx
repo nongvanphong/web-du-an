@@ -1,4 +1,4 @@
-import BillSceen from "./BillSceen";
+import BillSceen from "./Bill";
 
 export const Bill = {
   BillSceen,
