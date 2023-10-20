@@ -11,7 +11,7 @@ import { ErrorResponse } from "../../utils/types/status.typer";
 import { Index } from "./compornent";
 
 export const Home1 = () => {
-  const array = [1, 2, 3, 2, 3, 3, 3, 3, 4, 4];
+  const array = [1, 2, 3, 2, 3, 3, 3, 3];
   const navigate = useNavigate();
   const appContext = useContext(AppContext);
   const [activeItemIndex, setActiveItemIndex] = useState<number>(-1);
@@ -39,14 +39,6 @@ export const Home1 = () => {
       window.location.href = path.premissions;
     }
   }
-
-  // const hanleClick = () => {
-  //   if (!data) return;
-  //   if (data.count < 5) {
-  //     return (window.location.href = path.registerSrore);
-  //   }
-  // };
-
   const handleAcctive = (index: number) => {
     setIsOpen(true);
     setActiveItemIndex(index);
