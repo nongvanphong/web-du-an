@@ -44,7 +44,7 @@ function App() {
     email,
     setEmail,
   };
-
+  // bac1 test 11234
   return (
     <AppContext.Provider value={hanldeContext}>
       <QueryClientProvider client={queryClient}>
