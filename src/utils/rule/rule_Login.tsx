@@ -7,4 +7,8 @@ export const validationSchema = Yup.object().shape({
   //   value = value.replace(/\s+/g, "");
   //   return /^\d{10,15}$/.test(value); // Kiểm tra định dạng số điện thoại
   // }),
+  // .test("phone-validation", "Số điện thoại không đúng định dạng", (value) => {
+  //   value = value.replace(/\s+/g, "");
+  //   return /^\d{10,15}$/.test(value); // Kiểm tra định dạng số điện thoại
+  // }),
 });
